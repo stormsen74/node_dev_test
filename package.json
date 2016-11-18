@@ -1,0 +1,23 @@
+{
+  "name": "application-name",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "start": "budo index.js:bundle.js --live",
+    "build": "browserify index.js | uglifyjs > bundle.js"
+  },
+  "author": "stormsen",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "postprocessing": "^1.1.6",
+    "raf": "^3.3.0",
+    "three": "^0.82.1",
+    "three-effectcomposer": "0.0.1"
+  },
+  "devDependencies": {
+    "browserify": "^13.0.1",
+    "budo": "^8.3.0",
+    "uglify-js": "^2.6.4"
+  }
+}
