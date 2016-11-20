@@ -51,7 +51,8 @@ function init() {
         geometry.faces[i].color.setHex(hex);
         geometry.faces[i + 1].color.setHex(hex);
     }
-    var material = new THREE.MeshBasicMaterial({vertexColors: THREE.FaceColors, overdraw: 0.5});
+    //var material = new THREE.MeshBasicMaterial({vertexColors: THREE.FaceColors, overdraw: 0.5});
+    var material = new THREE.MeshNormalMaterial();
     cube = new THREE.Mesh(geometry, material);
     cube.position.y = 150;
     scene.add(cube)
@@ -105,10 +106,12 @@ function init() {
 function onWindowResize() {
     windowHalfX = window.innerWidth / 2;
     windowHalfY = window.innerHeight / 2;
+
+    //renderer.setSize(window.innerWidth, window.innerHeight);
+    composer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    composer.setSize(window.innerWidth, window.innerHeight);
+
 }
 //
 function onDocumentMouseDown(event) {
@@ -155,8 +158,8 @@ function animate() {
 }
 function render() {
     cube.rotation.y += ( targetRotation - cube.rotation.y ) * 0.05;
-     renderer.render(scene, camera);
-    //composer.render(clock.getDelta());
+    //renderer.render(scene, camera);
+    composer.render(clock.getDelta());
 }
 
 
