@@ -57,7 +57,7 @@ function init() {
     scene.add(cube)
 
     renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor(0xff0000, .01);
+    renderer.setClearColor(0xc3c3c3, .5);
     // renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(renderer.domElement);
@@ -72,7 +72,7 @@ function init() {
     var params = {
         grayscale: true,
         sepia: false,
-        vignette: false,
+        vignette: true,
         eskil: false,
         scanlines: true,
         noise: true,
@@ -155,8 +155,8 @@ function animate() {
 }
 function render() {
     cube.rotation.y += ( targetRotation - cube.rotation.y ) * 0.05;
-    // renderer.render(scene, camera);
-    composer.render(clock.getDelta());
+     renderer.render(scene, camera);
+    //composer.render(clock.getDelta());
 }
 
 
