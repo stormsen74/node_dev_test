@@ -18,9 +18,11 @@ var POSTPROCESSING = require('postprocessing');
 var raf = require('raf')
 
 import Random from './random';
+import Particle from './particle';
 
-
-console.log('!>',Random.sign())
+var p = new Particle();
+p.x = 1;
+console.log('!>',Random.sign(), p.position)
 
 
 var container, stats;
@@ -60,7 +62,7 @@ function init() {
     var material = new THREE.MeshNormalMaterial();
     cube = new THREE.Mesh(geometry, material);
     cube.position.y = 150;
-    scene.add(cube)
+    //scene.add(cube)
 
     renderer = new THREE.WebGLRenderer();
     renderer.setClearColor(0xc3c3c3, .5);
@@ -73,7 +75,7 @@ function init() {
 
     glitchPass = new POSTPROCESSING.GlitchPass();
     glitchPass.renderToScreen = true;
-    // composer.addPass(glitchPass);
+    composer.addPass(glitchPass);
 
     var params = {
         grayscale: true,
@@ -95,7 +97,7 @@ function init() {
     filmPass.greyscale = true;
     filmPass.setSize(window.innerWidth, window.innerHeight)
     filmPass.renderToScreen = true;
-    composer.addPass(filmPass);
+    //composer.addPass(filmPass);
 
     clock = new THREE.Clock(true);
 
@@ -112,11 +114,11 @@ function onWindowResize() {
     windowHalfX = window.innerWidth / 2;
     windowHalfY = window.innerHeight / 2;
 
-    //renderer.setSize(window.innerWidth, window.innerHeight);
-    composer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
 
+    composer.setSize(window.innerWidth, window.innerHeight);
 }
 //
 function onDocumentMouseDown(event) {
@@ -163,8 +165,8 @@ function animate() {
 }
 function render() {
     cube.rotation.y += ( targetRotation - cube.rotation.y ) * 0.05;
-    //renderer.render(scene, camera);
-    composer.render(clock.getDelta());
+    renderer.render(scene, camera);
+    //composer.render(clock.getDelta());
 }
 
 
