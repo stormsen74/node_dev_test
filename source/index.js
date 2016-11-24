@@ -17,6 +17,11 @@ var EffectComposer = require('three-effectcomposer')(THREE)
 var POSTPROCESSING = require('postprocessing');
 var raf = require('raf')
 
+import Random from './random';
+
+
+console.log('!>',Random.sign())
+
 
 var container, stats;
 var clock;
