@@ -11,6 +11,9 @@
 // http://vanruesc.github.io/postprocessing/public/tone-mapping.html
 // http://vanruesc.github.io/postprocessing/docs/
 
+// raf => ()
+// http://www.html5gamedevs.com/topic/20251-using-a-non-global-function-as-requestanimationframe-callback/
+
 // Our third-party dependency from npm
 var THREE = require('three');
 var EffectComposer = require('three-effectcomposer')(THREE)
