@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "pixi.js": "^4.2.2",
     "postprocessing": "^1.1.6",
     "raf": "^3.3.0",
     "three": "^0.82.1",

@@ -15,17 +15,20 @@
 // http://www.html5gamedevs.com/topic/20251-using-a-non-global-function-as-requestanimationframe-callback/
 
 // Our third-party dependency from npm
-var THREE = require('three');
-var EffectComposer = require('three-effectcomposer')(THREE)
-var POSTPROCESSING = require('postprocessing');
+// var THREE = require('three');
+// var EffectComposer = require('three-effectcomposer')(THREE)
+// var POSTPROCESSING = require('postprocessing');
 var raf = require('raf')
 
 import Random from './random';
-import Particle from './particle';
 
-var p = new Particle();
-p.x = 1;
-console.log('!>',Random.sign(), p.position)
+import PixiSet from './pixiSet';
+
+
+console.log('!>',Random.sign())
+
+var pixiSet = new PixiSet();
+
 
 
 var container, stats;
@@ -41,8 +44,8 @@ var mouseXOnMouseDown = 0;
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
-init();
-animate();
+// init();
+// animate();
 
 function init() {
     container = document.createElement('div');
