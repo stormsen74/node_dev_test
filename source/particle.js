@@ -18,8 +18,8 @@ class Particle extends PIXI.Sprite {
         this.mass = mass;
 
         this.shape = new PIXI.Graphics();
-        this.shape.beginFill(0xffffff)
-        this.shape.drawCircle(0, 0, 10)
+        this.shape.beginFill(0x00ccff)
+        this.shape.drawCircle(0, 0, 5)
         this.shape.endFill()
         // this.shape.cacheAsBitmap = false;
 

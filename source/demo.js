@@ -1,106 +1,98 @@
 /**
- * Created by STORMSEN on 24.11.2016.
+ * Created by STORMSEN on 29.11.2016.
  */
 
-import Sim from './sim'
+var raf = require('raf')
+var PIXI = require('pixi.js');
+
+import Bling from './bling';
+import Particle from './particle';
+import {Vector2} from './Vector2';
 
 class Demo {
     constructor() {
+        console.log('PixiSet!')
 
-        this.v = 0;
 
-        this.create();
+        var bling = new Bling(3);
+        console.log(bling.id)
+
+        var va = new Vector2(100, 0);
+        var vb = new Vector2(200, 0);
+        var x = new Vector2();
+        x.addVectors(va, vb)
+        console.log(x)
+
+        this.vCenter = new Vector2(window.innerWidth * .5, window.innerHeight * .5);
+        this.vPosition = new Vector2(100, 0);
+        this.t = 0;
+        this.particle = new Particle();
+
+
+        this.initPIXI();
+        this.initParticle();
+
+
+        this.loop()
     }
 
-    create() {
-        console.log('do')
+    initPIXI() {
+        let _screen = document.getElementById('screen');
 
-        this.sim = new Sim();
+        let rendererOptions = {
+            transparent: false,
+            backgroundColor: 0x404040,
+            resolution: 1,
+            antialias: true,
+            autoResize: false,
+            roundPixels: true //performance
+        };
+
+        this.renderer = new PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, rendererOptions);
+        _screen.appendChild(this.renderer.view);
+
+        this.stage = new PIXI.Container();
+        this.stage.interactive = true;
+
     }
 
+    initParticle() {
+
+        this.stage.addChild(this.particle);
+    }
+
+    loop() {
+        raf(() => {
+            this.loop()
+        });
+        this.update();
+        this.render();
+    }
+
+    update() {
+        this.t += .5;
+        //this.vPosition.add(new Vector2(Math.sin(10*this.t), 0))
+        // this.vPosition.multiplyScalar(.5)
+        this.vPosition.toPolar();
+        this.vPosition.x += Math.sin(this.t);
+        //this.vPosition.y = this.t;
+        this.vPosition.toCartesian();
+        this.vPosition.rotate(.01);
+        //this.vPosition.rotateAround(new Vector2(0, 0), .01);
+        console.log(this.vPosition)
+        this.particle.position.x = this.vCenter.x + this.vPosition.x;
+        this.particle.position.y = this.vCenter.y + this.vPosition.y;
+    }
+
+    render() {
+        this.renderer.render(this.stage);
+    }
 
 
 }
-
 
 // ——————————————————————————————————————————————————
 // Exports
 // ——————————————————————————————————————————————————
 
 export default Demo;
-
-
-
-
-
-
-//class CircleContainer extends PIXI.Sprite {
-//    constructor(...arg) {
-//        super(...arg);
-//
-//        this.circles = new Array();
-//    }
-//    render() {
-//        for(var i=0;i<400;i++){
-//            this.circles.push(new Circle());
-//            this.circles[i].count = this.stage.x * Math.random();
-//            this.circles[i].reg = Math.random() * 10 + 1;
-//            this.circles[i].friction = Math.random() * 2;
-//            this.addChild(this.circles[i]);
-//        }
-//    }
-//    update() {
-//        for(var circle of this.circles){
-//            circle.x = Math.sin(circle.count) * (this.stage.x / circle.reg) + (this.stage.x / 2) / circle.friction;
-//            circle.y = Math.cos(circle.count) * (this.stage.y / circle.reg) + (this.stage.y / 2) / circle.friction;
-//            circle.count += 0.01;
-//        }
-//    }
-//}
-//
-//class Circle extends PIXI.Sprite {
-//    constructor(...arg) {
-//        super(...arg);
-//
-//        this.deg = Math.floor(Math.random() * 20 + 1);
-//        this.alpha = Math.random();
-//
-//        this.graphics = new PIXI.Graphics();
-//        this.graphics.beginFill(0xF00d0F, 1);
-//        this.graphics.drawCircle(0, 0, this.deg);
-//        this.addChild(this.graphics);
-//    }
-//}
-
-
-/*
-class Main {
-    constructor() {
-        this.renderer = PIXI.autoDetectRenderer(this.w, this.h, {backgroundColor : 0x000000});
-        document.body.appendChild(this.renderer.view);
-
-        this.container = new CircleContainer();
-        this.container.stage = new Object();
-        this.container.stage.x = this.w;
-        this.container.stage.y = this.h;
-
-        this.stage = new PIXI.Container();
-        this.stage.addChild(this.container);
-    }
-    render() {
-        this.container.render();
-        this.renderer.render(this.stage);
-        this.animate();
-    }
-    animate() {
-        this.container.update();
-        this.renderer.render(this.stage);
-        window.requestAnimationFrame(this.animate.bind(this));
-    }
-}
-Main.prototype.w = window.innerWidth;
-Main.prototype.h = window.innerHeight;
-*/
-
-//var main = new Main();
-//main.render();

@@ -489,6 +489,37 @@ Vector2.prototype = {
 
         return this;
 
+    },
+
+    rotate: function (theta) {
+        var c = Math.cos(theta), s = Math.sin(theta);
+
+        var xx = c * this.x - s * this.y;
+
+        this.x = xx;
+        this.y = s * this.x + c * this.y;
+
+        return this;
+
+    },
+
+
+    toPolar: function () {
+        var r = Math.sqrt(this.x * this.x + this.y * this.y);
+
+        this.y = Math.atan2(this.y, this.x);
+        this.x = r;
+
+        return this;
+
+    },
+
+    toCartesian() {
+        var xx = (this.x * Math.cos(this.y));
+
+        this.y = (this.x * Math.sin(this.y));
+        this.x = xx;
+
     }
 
 };
