@@ -186,3 +186,16 @@ var url = require('url');
 
 // e.g.
 console.log(url.parse(window.location.href));
+
+
+/*-----------
+ snippets
+ -----------*/
+
+ //loop() {
+ //raf(() => {
+ //this.loop()
+ //});
+ //this.update();
+ //this.render();
+ //}

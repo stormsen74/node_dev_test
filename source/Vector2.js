@@ -8,6 +8,7 @@
  * @author zz85 / http://www.lab4games.net/zz85/blog
  */
 
+
 function Vector2(x, y) {
 
     this.x = x || 0;
@@ -494,6 +495,7 @@ Vector2.prototype = {
     // -added!
 
     rotate: function (theta) {
+
         var c = Math.cos(theta), s = Math.sin(theta);
 
         var xx = c * this.x - s * this.y;
@@ -506,7 +508,8 @@ Vector2.prototype = {
     },
 
 
-    toPolar: function () {
+    toPolar () {
+
         var r = Math.sqrt(this.x * this.x + this.y * this.y);
 
         this.y = Math.atan2(this.y, this.x);
@@ -517,12 +520,23 @@ Vector2.prototype = {
     },
 
     toCartesian() {
+
         var xx = (this.x * Math.cos(this.y));
 
         this.y = (this.x * Math.sin(this.y));
         this.x = xx;
 
-    }
+    },
+
+    jitter(jitterX = .01, jitterY = .01) {
+
+        this.x += Math.random() * jitterX - jitterX * 0.5;
+        this.y += Math.random() * jitterY - jitterY * 0.5;
+
+        return this;
+    },
+
+
 
 };
 

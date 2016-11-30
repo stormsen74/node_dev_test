@@ -31,7 +31,7 @@ class Demo {
         this.initPIXI();
         this.initParticle();
 
-        this.loop()
+        //this.loop()
 
     }
 
@@ -88,29 +88,29 @@ class Demo {
 
     }
 
-    loop() {
-        raf(() => {
-            this.loop()
-        });
-        this.update();
-        this.render();
-    }
 
     update() {
+
         this.t += .1;
         //this.vPosition.add(new Vector2(Math.sin(10*this.t), 0))
         // this.vPosition.multiplyScalar(.5)
         this.vPosition.toPolar();
         // phi
-        this.vPosition.y = this.t * .2;
+        this.vPosition.y = this.t * .3;
+        //this.vPosition.y = Math.sin(this.t * .2);
         // r
-        this.vPosition.x += 2 * Math.sin(this.t * 3);
-        // this.vPosition.x = this.vPosition.y
+        //this.vPosition.x += 2 * Math.sin(this.t * 3) + this.vPosition.y;
+        this.vPosition.x = 50 + Math.random() * 20;
 
         this.vPosition.toCartesian();
+
+        //this.vPosition.add(new Vector2(-1 + Math.random() * 2, -1 + Math.random() * 2))
         // this.vPosition.rotate(.01);
-        // this.vPosition.rotateAround(new Vector2(0, 0), .01);
-        // console.log(this.vPosition)
+        //this.vPosition.rotateAround(new Vector2(0, 0), .01);
+        //console.log(this.vPosition)
+
+        //this.vCenter.jitter(5, 5)
+
         this.particle.position.x = this.vCenter.x + this.vPosition.x;
         this.particle.position.y = this.vCenter.y + this.vPosition.y;
 
