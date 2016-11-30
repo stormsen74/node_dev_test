@@ -23,26 +23,28 @@ var mouseX = 0;
 var mouseXOnMouseDown = 0;
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
+var demo
 
 // init();
 // animate();
 
 function init() {
 
-    const demo = new Demo();
+    demo = new Demo();
 
     document.addEventListener('mousedown', onDocumentMouseDown, false);
     document.addEventListener('touchstart', onDocumentTouchStart, false);
     document.addEventListener('touchmove', onDocumentTouchMove, false);
     //
-    window.addEventListener('resize', onWindowResize, false);
+    window.addEventListener('resize', resize);
+    resize();
 
 }
 
-function onWindowResize() {
-    windowHalfX = window.innerWidth / 2;
-    windowHalfY = window.innerHeight / 2;
-
+function resize() {
+    demo.resize(window.innerWidth, window.innerHeight)
+    // windowHalfX = window.innerWidth / 2;
+    // windowHalfY = window.innerHeight / 2;
 }
 
 

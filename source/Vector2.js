@@ -491,6 +491,8 @@ Vector2.prototype = {
 
     },
 
+    // -added!
+
     rotate: function (theta) {
         var c = Math.cos(theta), s = Math.sin(theta);
 
