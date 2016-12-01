@@ -14,7 +14,6 @@ class Particle extends PIXI.Container {
 
         this.tail = [];
 
-
         this.mass = mass;
 
         this.shape = new PIXI.Graphics();
@@ -24,7 +23,6 @@ class Particle extends PIXI.Container {
         this.shape.cacheAsBitmap = true;
 
         this.addChild(this.shape);
-
         
     }
     

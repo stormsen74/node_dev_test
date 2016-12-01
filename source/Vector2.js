@@ -537,8 +537,47 @@ Vector2.prototype = {
     },
 
 
-
 };
 
+// ——————————————————————————————————————————————————
+// Static
+// ——————————————————————————————————————————————————
+
+Vector2.add = function (v1, v2) {
+    return new Vector2(v1.x + v2.x, v1.y + v2.y);
+}
+
+Vector2.subtract = function (v1, v2) {
+    return new Vector2(v1.x - v2.x, v1.y - v2.y);
+}
+
+Vector2.multiply = function (v, m) {
+    return new Vector2(v.x * m, v.y * m);
+}
+
+Vector2.divide = function (v, d) {
+    return new Vector2(v.x / d, v.y / d);
+}
+
+
+// public static add(v1:Vec2, v2:Vec2) {
+//     return new Vec2(v1.x + v2.x, v1.y + v2.y);
+// }
+//
+// public static subtract(v1:Vec2, v2:Vec2) {
+//     return new Vec2(v1.x - v2.x, v1.y - v2.y);
+// }
+//
+// public static multiply(v, m) {
+//     return new Vec2(v.x * m, v.y * m);
+// }
+//
+// public static divide(v, d) {
+//     return new Vec2(v.x / d, v.y / d);
+// }
+
+// ——————————————————————————————————————————————————
+// Exports
+// ——————————————————————————————————————————————————
 
 export {Vector2};

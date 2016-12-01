@@ -5,14 +5,14 @@
 var raf = require('raf')
 var PIXI = require('pixi.js');
 
-import Particle from './particle';
-import {Vector2} from './Vector2';
+import Sim_01 from './sim_01';
+import Sim_02 from './sim_02';
 
 class Demo {
 
 
     constructor() {
-        console.log('PixiSet!')
+        console.log('Demo!')
 
 
         this.size = {
@@ -22,16 +22,11 @@ class Demo {
         }
 
 
-        this.vCenter = new Vector2(this.size.w * .5, this.size.h * .5);
-        this.vPosition = new Vector2(100, 0);
-        this.t = 0;
-        this.particle = new Particle();
+        this.sim = new Sim_02(this.size)
 
 
-        this.initPIXI();
-        this.initParticle();
-
-        //this.loop()
+        this.init_PIXI_Renderer();
+        this.initSim();
 
     }
 
@@ -59,7 +54,7 @@ class Demo {
         document.getElementById('screen').style.top = (height - h) * .5 + 'px';
     }
 
-    initPIXI() {
+    init_PIXI_Renderer() {
         let _screen = document.getElementById('screen');
 
         let rendererOptions = {
@@ -77,64 +72,25 @@ class Demo {
         this.stage = new PIXI.Container();
         this.stage.interactive = true;
 
-
     }
 
-    initParticle() {
+    initSim() {
 
-        this.lines = new PIXI.Graphics();
-        this.stage.addChild(this.lines);
-        this.stage.addChild(this.particle);
+        this.stage.addChild(this.sim)
 
     }
 
 
     update() {
 
-        this.t += .1;
-        //this.vPosition.add(new Vector2(Math.sin(10*this.t), 0))
-        // this.vPosition.multiplyScalar(.5)
-        this.vPosition.toPolar();
-        // phi
-        this.vPosition.y = this.t * .3;
-        //this.vPosition.y = Math.sin(this.t * .2);
-        // r
-        //this.vPosition.x += 2 * Math.sin(this.t * 3) + this.vPosition.y;
-        this.vPosition.x = 50 + Math.random() * 20;
-
-        this.vPosition.toCartesian();
-
-        //this.vPosition.add(new Vector2(-1 + Math.random() * 2, -1 + Math.random() * 2))
-        // this.vPosition.rotate(.01);
-        //this.vPosition.rotateAround(new Vector2(0, 0), .01);
-        //console.log(this.vPosition)
-
-        //this.vCenter.jitter(5, 5)
-
-        this.particle.position.x = this.vCenter.x + this.vPosition.x;
-        this.particle.position.y = this.vCenter.y + this.vPosition.y;
-
-        this.particle.tail.unshift({
-            x: this.particle.position.x,
-            y: this.particle.position.y
-        });
-
-        if (this.particle.tail.length > 100) {
-            this.particle.tail.pop();
-        }
-
-        this.lines.clear();
-        this.lines.lineStyle(1, 0xffffff);
-        this.lines.moveTo(this.particle.position.x, this.particle.position.y);
-        this.particle.tail.forEach((point, index) => {
-            this.lines.lineTo(point.x, point.y);
-        });
-
+        this.sim.update();
 
     }
 
     render() {
+
         this.renderer.render(this.stage);
+
     }
 
 
