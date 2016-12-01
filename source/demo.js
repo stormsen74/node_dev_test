@@ -5,8 +5,10 @@
 var raf = require('raf')
 var PIXI = require('pixi.js');
 
+import Sim from './sim';
 import Sim_01 from './sim_01';
 import Sim_02 from './sim_02';
+import Sim_03 from './sim_03';
 
 class Demo {
 
@@ -22,7 +24,7 @@ class Demo {
         }
 
 
-        this.sim = new Sim_02(this.size)
+        this.sim = new Sim_03(this.size)
 
 
         this.init_PIXI_Renderer();

@@ -3,14 +3,11 @@
  */
 
 var PIXI = require('pixi.js');
-import {Vector2} from './Vector2';
+import {Vector2} from './vector2';
 
 class Agent extends PIXI.Container {
     constructor(x = 0, y = 0, mass = .5) {
         super();
-
-        // this.SEEK_MAX_SPEED = 15.0;
-        this.SEEK_MAX_FORCE = .2;
 
         this.location = new Vector2(x, y);
         this.velocity = new Vector2();

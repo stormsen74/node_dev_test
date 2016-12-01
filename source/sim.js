@@ -1,42 +1,73 @@
 /**
- * Created by STORMSEN on 25.11.2016.
+ * Created by STORMSEN on 01.12.2016.
  */
 
 var PIXI = require('pixi.js');
-var raf = require('raf')
 
-class Sim {
-    constructor() {
-        this.renderer = PIXI.autoDetectRenderer(this.w, this.h, {backgroundColor: 0x663355});
-        document.body.appendChild(this.renderer.view);
+import {Vector2} from './vector2';
+import Agent from './agent';
 
-        //this.container = new CircleContainer();
-        //this.container.stage = new Object();
-        //this.container.stage.x = this.w;
-        //this.container.stage.y = this.h;
+class Sim extends PIXI.Container {
 
-        this.stage = new PIXI.Container();
-        //this.stage.addChild(this.container);
+    constructor(_size) {
+        super()
 
-        this.renderer.render(this.stage)
+        this.vMouse = new Vector2();
+        this.vMouse.pressed = false;
+
+        this.initListener();
+
+    }
+
+    initListener() {
+
+        this.onPointerDown = this.onPointerDown.bind(this);
+        this.onPointerUp = this.onPointerUp.bind(this);
+        this.onPointerMove = this.onPointerMove.bind(this);
+
+
+        document.addEventListener('mousedown', this.onPointerDown, false);
+        document.addEventListener('touchstart', this.onPointerDown, false);
+
+        document.addEventListener('mouseup', this.onPointerUp, false);
+        document.addEventListener('touchend', this.onPointerUp, false);
+
+        document.addEventListener('mousemove', this.onPointerMove, false);
+        document.addEventListener('touchmove', this.onPointerMove, false);
+    }
+
+    init() {
+
+    }
+
+    onPointerDown(event) {
+        this.vMouse.pressed = true;
+    }
+
+    onPointerUp(event) {
+        this.vMouse.pressed = false;
+    }
+
+    onPointerMove(event) {
+        //const {clientX: x, clientY: y} = (
+        //    event.changedTouches ? event.changedTouches[0] : event
+        //);
+    }
+
+
+    update() {
+        if (this.vMouse.pressed) {
+            //console.log(this.vMouse)
+        }
 
 
     }
 
 
-
-
-
-
-
-
-
-
-
 }
 
-Sim.prototype.w = window.innerWidth;
-Sim.prototype.h = window.innerHeight;
+Sim.PARAMETERS = {};
+
 
 // ——————————————————————————————————————————————————
 // Exports

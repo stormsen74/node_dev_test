@@ -3,7 +3,7 @@
  */
 
 var PIXI = require('pixi.js');
-import {Vector2} from './Vector2';
+import {Vector2} from './vector2';
 
 class Particle extends PIXI.Container {
     constructor(x = 0, y = 0, mass = 1) {
