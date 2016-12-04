@@ -4,8 +4,8 @@
 
 var PIXI = require('pixi.js');
 
-import {Vector2} from './vector2';
-import Agent from './agent';
+import {Vector2} from './math/vector2';
+import Agent from './particles/agent';
 
 class Sim extends PIXI.Container {
 

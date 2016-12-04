@@ -4,8 +4,8 @@
 
 var PIXI = require('pixi.js');
 
-import {Vector2} from './vector2';
-import Particle from './particle';
+import {Vector2} from './math/vector2';
+import Particle from './particles/particle';
 
 class Sim_01 extends PIXI.Container {
 
@@ -13,7 +13,7 @@ class Sim_01 extends PIXI.Container {
         super()
 
         this.t = 0;
-        this.vCenter = new Vector2(_size.w * .5, _size.h * .5);
+        this.vCenter = new Vector2(_size.WIDTH* .5, _size.HEIGHT * .5);
         this.vPosition = new Vector2(150, 0);
         this.particle = new Particle();
         this.lines = new PIXI.Graphics();

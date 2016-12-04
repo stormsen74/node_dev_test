@@ -3,33 +3,57 @@
  */
 
 var PIXI = require('pixi.js');
+var colormap = require('colormap')
 
-import {Vector2} from './vector2';
-import Agent from './agent';
+import {Vector2} from './math/vector2';
+import Agent from './particles/agent';
 import Sim from './sim';
+
+import Random from './random'
+
+import { SIM_DEFAULT } from './config';
+import { CLR } from './config';
 
 class Sim_03 extends Sim {
 
     constructor(_size) {
         super()
 
+        this.size = _size;
+
+
         this.agents = [];
         this.lines = new PIXI.Graphics();
+        this.lines.blendMode = PIXI.BLEND_MODES.ADD;
         this.addChild(this.lines);
+
+        //https://www.npmjs.com/package/colormap
+        let options = {
+            colormap: 'copper',   // pick a builtin colormap or add your own
+            nshades: 30,       // how many divisions
+            format: 'hex',     // "hex" or "rgb" or "rgbaString"
+            alpha: 1           // set an alpha value or a linear alpha mapping [start, end]
+        }
+        CLR.PALETTE = colormap(options);
+        for (var i = 0; i < CLR.PALETTE.length; i++) {
+            CLR.PALETTE[i] = this.hexStringToNumber(CLR.PALETTE[i])
+        }
 
 
         this.init();
-
         this.update();
+    }
+
+    hexStringToNumber(string) {
+        return parseInt(string.substring(1), 16);
     }
 
     init() {
         console.log('i:')
-        for (var i = 0; i <= Sim_03.MAX_PARTICLES; i++) {
-            let agent = new Agent(Math.random() * 500, Math.random() * 500, .2 + Math.random() * .2)
-            Agent.SEEK_MAX_FORCE = .1;
+        for (var i = 0; i <= SIM_DEFAULT.MAX_PARTICLES; i++) {
+            let agent = new Agent(new Vector2(Random() * this.size.WIDTH, Random() * this.size.HEIGHT), .2 + Random() * .2)
             this.addChild(agent);
-            this.agents.push(agent)
+            this.agents.push(agent);
         }
     }
 
@@ -61,11 +85,12 @@ class Sim_03 extends Sim {
                     y: agent.position.y
                 });
 
-                if (agent.tail.length > Sim_03.TAIL_LENGTH) {
+                if (agent.tail.length > agent.TAIL_LENGTH) {
                     agent.tail.pop();
                 }
 
-                this.lines.lineStyle(1, 0xffffff);
+                //console.log(agent.color)
+                this.lines.lineStyle(1, agent.color);
                 this.lines.moveTo(agent.position.x, agent.position.y);
 
                 agent.tail.forEach((point, index) => {
@@ -80,8 +105,8 @@ class Sim_03 extends Sim {
 
 }
 
-Sim_03.MAX_PARTICLES = 100;
-Sim_03.TAIL_LENGTH = 10;
+//Sim_03.MAX_PARTICLES = 100;
+//Sim_03.TAIL_LENGTH = 10;
 
 
 // ——————————————————————————————————————————————————

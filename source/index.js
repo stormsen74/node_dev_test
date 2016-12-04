@@ -12,7 +12,7 @@ import Demo from './demo';
 // http://www.2ality.com/
 
 
-console.log('!>',Random.sign())
+console.log('!>', Random.sign())
 
 const init = () => {
     const demo = new Demo();
@@ -30,6 +30,7 @@ const init = () => {
     resize();
     update();
 };
+
 
 
 

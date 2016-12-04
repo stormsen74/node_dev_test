@@ -13,6 +13,7 @@ function Vector2(x, y) {
 
     this.x = x || 0;
     this.y = y || 0;
+    this.theta = 0;
 
 }
 
@@ -528,6 +529,7 @@ Vector2.prototype = {
 
     },
 
+
     jitter(jitterX = .01, jitterY = .01) {
 
         this.x += Math.random() * jitterX - jitterX * 0.5;
@@ -535,6 +537,15 @@ Vector2.prototype = {
 
         return this;
     },
+
+    //wander(value) {
+    //    this.theta += (0.5) * value;
+    //
+    //    this.x = Math.sin(this.theta) * Math.cos(this.theta) * 0.1;
+    //    this.y = Math.sin(this.theta) * Math.cos(this.theta) * 0.1;
+    //
+    //    return this;
+    //}
 
 
 };
@@ -557,6 +568,10 @@ Vector2.multiply = function (v, m) {
 
 Vector2.divide = function (v, d) {
     return new Vector2(v.x / d, v.y / d);
+}
+
+Vector2.getAngleRAD = function (v) {
+    return Math.atan2(v.y, v.x);
 }
 
 

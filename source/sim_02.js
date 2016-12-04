@@ -4,8 +4,8 @@
 
 var PIXI = require('pixi.js');
 
-import {Vector2} from './vector2';
-import Agent from './agent';
+import {Vector2} from './math/vector2';
+import Agent from './particles/agent';
 
 class Sim_02 extends PIXI.Container {
 
@@ -40,7 +40,7 @@ class Sim_02 extends PIXI.Container {
 
     init() {
         for (var i = 0; i <= Sim_02.MAX_PARTICLES; i++) {
-            let agent = new Agent(Math.random() * 500, Math.random() * 500, .2 + Math.random() * .2)
+            let agent = new Agent(new Vector2(Math.random() * 500, Math.random() * 500), .2 + Math.random() * .2)
             this.addChild(agent);
             this.agents.push(agent)
         }
