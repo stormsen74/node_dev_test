@@ -14,12 +14,14 @@ class Agent extends PIXI.Container {
     constructor(_location, mass = .5) {
         super();
 
+        this.mass = mass;
         this.location = new Vector2(_location.x, _location.y);
         this.velocity = new Vector2();
         this.acceleration = new Vector2();
         this.angle = 0;
+
         this.vecDesired = new Vector2();
-        this.mass = mass;
+        this.vWander = new Vector2();
 
         this.position.x = _location.x;
         this.position.y = _location.y;
@@ -44,8 +46,8 @@ class Agent extends PIXI.Container {
         this.v.moveTo(0, 0);
         this.v.lineTo(30, 0);
 
-        this.addChild(this.body);
-        this.addChild(this.v);
+        //this.addChild(this.body);
+        //this.addChild(this.v);
 
         //console.log(DEFAULT_AGENT)
     }
@@ -63,6 +65,11 @@ class Agent extends PIXI.Container {
         this.applyForce(this.vSteer);
     }
 
+    wander() {
+        this.vWander.jitter(.01, .01);
+        this.velocity.add(this.vWander);
+    }
+
     /*------------------------------------------------
      apply force (wind, gravity...)
      -------------------------------------------------*/
@@ -75,7 +82,7 @@ class Agent extends PIXI.Container {
     update() {
 
         this.velocity.add(this.acceleration);
-        this.velocity.clampLength(1, 14);
+        this.velocity.clampLength(1, 15);
 
         this.location.add(this.velocity);
 
@@ -90,9 +97,7 @@ class Agent extends PIXI.Container {
 
     }
 
-    checkBounds(bounds) {
-
-        /*===wrap===*/
+    wrap(bounds) {
 
         if (this.location.x < bounds.x1) {
             this.location.x = bounds.x2;
@@ -104,6 +109,31 @@ class Agent extends PIXI.Container {
         } else if (this.location.y > bounds.y2) {
             this.location.y = bounds.y1;
         }
+    }
+
+
+    bounce(bounds) {
+
+        if (this.location.x < bounds.x1) {
+            this.location.x = bounds.x1;
+            this.velocity.x *= -1;
+            this.vWander.x *= -1;
+        } else if (this.location.x > bounds.x2) {
+            this.location.x = bounds.x2;
+            this.velocity.x *= -1;
+            this.vWander.x *= -1;
+        }
+        if (this.location.y < bounds.y1) {
+            this.location.y = bounds.y1;
+            this.velocity.y *= -1;
+            this.vWander.y *= -1;
+        } else if (this.location.y > bounds.y2) {
+            this.location.y = bounds.y2;
+            this.velocity.y *= -1;
+            this.vWander.y *= -1;
+            //this.velocity.multiply(0.5);
+        }
+
     }
 
 }

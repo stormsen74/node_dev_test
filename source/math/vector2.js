@@ -1,12 +1,16 @@
 /**
- * Created by STORMSEN on 29.11.2016.
- */
-/**
  * @author mrdoob / http://mrdoob.com/
  * @author philogb / http://blog.thejit.org/
  * @author egraether / http://egraether.com/
  * @author zz85 / http://www.lab4games.net/zz85/blog
  */
+
+
+/**
+ * Created by STORMSEN on 29.11.2016.
+ */
+
+import mathUtils from '../math/mathUtils';
 
 
 function Vector2(x, y) {
@@ -530,7 +534,16 @@ Vector2.prototype = {
     },
 
 
-    jitter(jitterX = .01, jitterY = .01) {
+    jitter(val = .05, _jitterY = 0) {
+        let jitterX, jitterY;
+
+        if (_jitterY == 0) {
+            jitterX = val;
+            jitterY = val
+        } else {
+            jitterX = val;
+            jitterY = _jitterY;
+        }
 
         this.x += Math.random() * jitterX - jitterX * 0.5;
         this.y += Math.random() * jitterY - jitterY * 0.5;
@@ -538,14 +551,23 @@ Vector2.prototype = {
         return this;
     },
 
-    //wander(value) {
-    //    this.theta += (0.5) * value;
-    //
-    //    this.x = Math.sin(this.theta) * Math.cos(this.theta) * 0.1;
-    //    this.y = Math.sin(this.theta) * Math.cos(this.theta) * 0.1;
-    //
-    //    return this;
-    //}
+    wander(value) {
+
+        // polar
+        let r = Math.sqrt(this.x * this.x + this.y * this.y);
+        let theta = Math.atan2(this.y, this.x);
+
+        //this.x = r;
+
+        theta += mathUtils.getRandomBetween(-0.5, 0.5) * value;
+        //console.log(theta)
+
+
+        this.x = Math.sin(theta) * Math.cos(theta) * 0.1;
+        this.y = Math.sin(theta) * Math.cos(theta) * 0.1;
+
+        return this;
+    }
 
 
 };

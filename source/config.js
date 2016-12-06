@@ -11,7 +11,7 @@ import {Vector2} from './math/vector2';
 export const DEFAULT_AGENT = {
     SEEK_MAX_SPEED: 10,
     SEEK_MAX_FORCE: .15,
-    TAIL_LENGTH: 23
+    TAIL_LENGTH: 40
 }
 
 export const DEFAULT_SIZE = {

@@ -20,8 +20,8 @@ class Sim_04 extends Sim {
 
         this.size = _size;
 
-        this.repeller = new Repeller(new Vector2(_size.WIDTH * .5, _size.HEIGHT * .5), 50)
-        this.attractor = new Attractor(new Vector2(200, 200), 50)
+        this.repeller = new Repeller(new Vector2(200, 300), 30)
+        this.attractor = new Attractor(new Vector2(_size.WIDTH * .5, _size.HEIGHT * .5), 40)
 
         let origin = new Vector2(_size.WIDTH * .5, _size.HEIGHT * .5)
         this.GRAVITY = new Vector2(0, .01)

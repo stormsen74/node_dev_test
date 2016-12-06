@@ -14,6 +14,8 @@ class Attractor extends PIXI.Container {
         this.strength = 1000;
 
         this.gfx = new PIXI.Graphics();
+        this.gfx.alpha = .1;
+        //this.gfx.cacheAsBitmap = true;
 
         this.addChild(this.gfx)
         this.gfx.lineStyle(1, 0x33ff00);
