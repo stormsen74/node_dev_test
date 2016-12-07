@@ -7,11 +7,12 @@ import Agent from './particles/agent';
 import ParticleSystem from './particles/pSystem';
 import Repeller from './particles/repeller';
 import Attractor from './particles/attractor';
+import mathUtils from './math/mathUtils';
 import Sim from './sim';
 import Random from './random'
 
-import { SIM_DEFAULT } from './config';
-import { INPUT_DATA } from './config';
+import {SIM_DEFAULT} from './config';
+import {INPUT_DATA} from './config';
 
 class Sim_04 extends Sim {
 
@@ -21,10 +22,10 @@ class Sim_04 extends Sim {
         this.size = _size;
 
         this.repeller = new Repeller(new Vector2(200, 300), 30)
-        this.attractor = new Attractor(new Vector2(_size.WIDTH * .5, _size.HEIGHT * .5), 40)
+        this.attractor = new Attractor(new Vector2(_size.WIDTH * .5, _size.HEIGHT * .5), 60)
 
         let origin = new Vector2(_size.WIDTH * .5, _size.HEIGHT * .5)
-        this.GRAVITY = new Vector2(0, .01)
+        this.GRAVITY = new Vector2(0, .05)
 
 
         this.pSystem = new ParticleSystem(_size, origin);
@@ -39,7 +40,8 @@ class Sim_04 extends Sim {
 
     onPointerDown(event) {
         this.vMouse.pressed = true;
-        this.pSystem.addParticle(this.vMouse, .5 + Math.random() * 2);
+        this.pSystem.addParticle(mathUtils.getRandomBetween(.5, 1), this.vMouse);
+        // this.pSystem.addParticle(mathUtils.getRandomBetween(.1, 1));
     }
 
     onPointerUp(event) {
@@ -66,11 +68,15 @@ class Sim_04 extends Sim {
 
     update() {
 
-        this.pSystem.update();
-        //this.pSystem.applyForce(this.GRAVITY);
+        this.pSystem.wander(-.1, .1);
         this.pSystem.applyRepeller(this.repeller);
         this.pSystem.applyAttractor(this.attractor);
-        //this.pSystem.seek(this.vMouse);
+        // this.pSystem.seek(this.vMouse);
+        // this.pSystem.applyForce(this.GRAVITY);
+
+
+        this.pSystem.update();
+        this.pSystem.drawTail();
 
 
         // inherit

@@ -51,8 +51,6 @@ Vector2.prototype = {
 
     },
 
-    //
-
     set: function (x, y) {
 
         this.x = x;
@@ -534,23 +532,15 @@ Vector2.prototype = {
     },
 
 
-    jitter(val = .05, _jitterY = 0) {
-        let jitterX, jitterY;
-
-        if (_jitterY == 0) {
-            jitterX = val;
-            jitterY = val
-        } else {
-            jitterX = val;
-            jitterY = _jitterY;
-        }
+    jitter(jitterX = .01, jitterY = .01) {
 
         this.x += Math.random() * jitterX - jitterX * 0.5;
         this.y += Math.random() * jitterY - jitterY * 0.5;
 
         return this;
     },
-
+    
+    // TODO ???
     wander(value) {
 
         // polar
@@ -596,22 +586,6 @@ Vector2.getAngleRAD = function (v) {
     return Math.atan2(v.y, v.x);
 }
 
-
-// public static add(v1:Vec2, v2:Vec2) {
-//     return new Vec2(v1.x + v2.x, v1.y + v2.y);
-// }
-//
-// public static subtract(v1:Vec2, v2:Vec2) {
-//     return new Vec2(v1.x - v2.x, v1.y - v2.y);
-// }
-//
-// public static multiply(v, m) {
-//     return new Vec2(v.x * m, v.y * m);
-// }
-//
-// public static divide(v, d) {
-//     return new Vec2(v.x / d, v.y / d);
-// }
 
 // ——————————————————————————————————————————————————
 // Exports

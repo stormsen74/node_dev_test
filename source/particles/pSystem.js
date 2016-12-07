@@ -4,9 +4,9 @@
 
 var PIXI = require('pixi.js');
 
-import { SIM_DEFAULT } from '../config';
-import { DEFAULT_AGENT } from '../config';
-import { INPUT_DATA } from '../config';
+import {SIM_DEFAULT} from '../config';
+import {DEFAULT_AGENT} from '../config';
+import {INPUT_DATA} from '../config';
 import Agent from '../particles/agent';
 import Bounds from '../particles/bounds';
 import mathUtils from '../math/mathUtils';
@@ -21,26 +21,22 @@ class ParticleSystem extends PIXI.Container {
         this.particles = [];
         this.size = _size;
         this.origin = _origin;
-        this.bounds = new Bounds(0, 0, _size.WIDTH, _size.HEIGHT);
+        this.bounds = new Bounds(0, 0, this.size.WIDTH, this.size.HEIGHT);
 
 
-        this.lines = new PIXI.Graphics();
-        this.lines.blendMode = PIXI.BLEND_MODES.ADD;
-        this.addChild(this.lines);
+        this.gfx = new PIXI.Graphics();
+        this.gfx.blendMode = PIXI.BLEND_MODES.ADD;
+        this.addChild(this.gfx);
 
         //this.init();
 
         console.log(mathUtils.getRandomBetween())
         console.log(mathUtils.getRandomBetween())
     }
+    
 
-    //init() {
-    //    for (var i = 0; i <= 10; i++) {
-    //
-    //    }
-    //}
-
-    addParticle(_location, _mass) {
+    addParticle(_mass = 1, _location) {
+        if (_location === undefined) _location = this.origin;
         let agent = new Agent(_location, _mass);
         this.addChild(agent);
         this.particles.push(agent);
@@ -66,37 +62,25 @@ class ParticleSystem extends PIXI.Container {
         });
     }
 
-
-    applyTest() {
-        this.particles.forEach(agent => {
-            this.particles.forEach(_agent => {
-                let f = a.attract(_agent);
-                agent.applyForce(f);
-            })
-        });
-    }
-
     seek(vTarget) {
         this.particles.forEach(agent => {
-            let vecDesired = Vector2.subtract(vTarget, agent.location).normalize().multiplyScalar(DEFAULT_AGENT.SEEK_MAX_SPEED);
-            let vSteer = Vector2.subtract(vecDesired, agent.velocity);
-            vSteer.clampLength(0, DEFAULT_AGENT.SEEK_MAX_FORCE);
-
-            agent.applyForce(vSteer);
+            agent.seek(vTarget);
         });
     }
 
-    update() {
+    wander(jX, jY, maxLength) {
+        this.particles.forEach(agent => {
+            agent.wander(jX, jY, maxLength);
+        });
+    }
 
-        this.lines.clear();
+
+    drawTail() {
+        this.gfx.clear();
 
         this.particles.forEach(agent => {
 
-            //agent.wander();
 
-            agent.update();
-
-            // extend
             agent.tail.unshift({
                 x: agent.position.x,
                 y: agent.position.y
@@ -106,17 +90,34 @@ class ParticleSystem extends PIXI.Container {
                 agent.tail.pop();
             }
 
-            //console.log(agent.color)
-            this.lines.lineStyle(1, agent.color);
-            this.lines.moveTo(agent.position.x, agent.position.y);
+            // case wrap bounds!  TODO
+            // if (agent.position.x < this.bounds.x1 || agent.position.x > this.bounds.x2) {
+            //     agent.tail = []
+            // }
+            //
+            // if (agent.position.y < this.bounds.y1 || agent.position.y > this.bounds.y2) {
+            //     agent.tail = []
+            // }
+            // case wrap bounds!  TODO
+
+            this.gfx.lineStyle(1, agent.color);
+            this.gfx.moveTo(agent.position.x, agent.position.y);
 
             agent.tail.forEach((point, index) => {
-                this.lines.lineTo(point.x, point.y);
+                this.gfx.lineTo(point.x, point.y);
             });
+        })
 
-            // bounds
+    }
+
+    update() {
+
+
+        this.particles.forEach(agent => {
+
             agent.bounce(this.bounds);
 
+            agent.update();
 
         });
     }

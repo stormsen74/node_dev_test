@@ -6,13 +6,20 @@ var PIXI = require('pixi.js');
 import {Vector2} from './../math/vector2';
 import Random from './../random'
 
-import { DEFAULT_AGENT } from './../config';
-import { COLORS } from './../config';
-import { CLR } from './../config';
+import {DEFAULT_AGENT} from './../config';
+import {COLORS} from './../config';
+import {CLR} from './../config';
 
 class Agent extends PIXI.Container {
     constructor(_location, mass = .5) {
         super();
+
+        this.SEEK_MAX_SPEED = 10;
+        this.SEEK_MAX_FORCE = .15;
+        this.VELOCITY_MIN = 1;
+        this.VELOCITY_MAX = 15;
+        this.TAIL_LENGTH = 20;
+
 
         this.mass = mass;
         this.location = new Vector2(_location.x, _location.y);
@@ -27,7 +34,6 @@ class Agent extends PIXI.Container {
         this.position.y = _location.y;
 
         this.tail = [];
-        this.TAIL_LENGTH = DEFAULT_AGENT.TAIL_LENGTH + Random() * 23;
 
         this.color = Random.item(COLORS);
 
@@ -40,38 +46,39 @@ class Agent extends PIXI.Container {
         this.body.endFill();
         //this.body.cacheAsBitmap = true;
 
-        this.v = new PIXI.Graphics();
-        this.v.lineStyle(1, this.color);
-        this.v.x += r;
-        this.v.moveTo(0, 0);
-        this.v.lineTo(30, 0);
+        this.vDebug = new PIXI.Graphics();
+        this.vDebug.lineStyle(1, this.color);
+        // this.vDebug.x += r;
+        this.vDebug.moveTo(0, 0);
+        this.vDebug.lineTo(30, 0);
 
         //this.addChild(this.body);
-        //this.addChild(this.v);
+        this.addChild(this.vDebug);
 
         //console.log(DEFAULT_AGENT)
     }
 
 
     seek(vTarget) {
-        this.vecDesired = Vector2.subtract(vTarget, this.location).normalize().multiplyScalar(DEFAULT_AGENT.SEEK_MAX_SPEED);
+        this.vecDesired = Vector2.subtract(vTarget, this.location).normalize().multiplyScalar(this.SEEK_MAX_SPEED);
 
         this.vSteer = Vector2.subtract(this.vecDesired, this.velocity);
 
         // limit the magnitude of the steering force.
-        this.vSteer.clampLength(0, DEFAULT_AGENT.SEEK_MAX_FORCE);
+        this.vSteer.clampLength(0, this.SEEK_MAX_FORCE);
 
         // apply the steering force
         this.applyForce(this.vSteer);
     }
 
-    wander() {
-        this.vWander.jitter(.01, .01);
-        this.velocity.add(this.vWander);
+    wander(jX, jY, strength) {
+        this.vWander.jitter(jX, jY);
+        this.vWander.normalize().multiplyScalar(.05);
+        this.applyForce(this.vWander);
     }
 
     /*------------------------------------------------
-     apply force (wind, gravity...)
+     apply force
      -------------------------------------------------*/
 
     applyForce(vForce) {
@@ -79,23 +86,30 @@ class Agent extends PIXI.Container {
         this.acceleration.add(force);
     }
 
+    /*------------------------------------------------
+     update
+     -------------------------------------------------*/
+
     update() {
 
         this.velocity.add(this.acceleration);
-        this.velocity.clampLength(1, 15);
-
+        this.velocity.clampLength(this.VELOCITY_MIN, this.VELOCITY_MAX);
         this.location.add(this.velocity);
 
         this.angle = Vector2.getAngleRAD(this.velocity);
 
         this.position.x = this.location.x;
         this.position.y = this.location.y;
-        this.rotation = this.angle
+        this.rotation = this.angle;
 
         // set acceleration to zero!
         this.acceleration.multiplyScalar(0);
 
     }
+
+    /*------------------------------------------------
+     bounds 
+     -------------------------------------------------*/
 
     wrap(bounds) {
 
