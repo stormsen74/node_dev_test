@@ -7,7 +7,7 @@ import Agent from './particles/agent';
 import ParticleSystem from './particles/pSystem';
 import Repeller from './particles/repeller';
 import Attractor from './particles/attractor';
-import mathUtils from './math/mathUtils';
+import mathUtils from './utils/mathUtils';
 import Sim from './sim';
 import Random from './random'
 
@@ -40,8 +40,7 @@ class Sim_04 extends Sim {
 
     onPointerDown(event) {
         this.vMouse.pressed = true;
-        this.pSystem.addParticle(mathUtils.getRandomBetween(.5, 1), this.vMouse);
-        // this.pSystem.addParticle(mathUtils.getRandomBetween(.1, 1));
+        this.pSystem.addParticle(mathUtils.getRandomBetween(1, 9), this.vMouse);
     }
 
     onPointerUp(event) {
@@ -68,10 +67,10 @@ class Sim_04 extends Sim {
 
     update() {
 
-        this.pSystem.wander(-.1, .1);
+        //this.pSystem.wander(-.1, .1);
         this.pSystem.applyRepeller(this.repeller);
         this.pSystem.applyAttractor(this.attractor);
-        // this.pSystem.seek(this.vMouse);
+        this.pSystem.seek(this.vMouse);
         // this.pSystem.applyForce(this.GRAVITY);
 
 
@@ -81,7 +80,7 @@ class Sim_04 extends Sim {
 
         // inherit
         if (this.vMouse.pressed) {
-            //this.pSystem.addParticle(this.vMouse)
+            //this.pSystem.addParticle(mathUtils.getRandomBetween(1, 10), this.vMouse)
         }
 
     }

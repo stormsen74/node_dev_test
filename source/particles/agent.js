@@ -9,6 +9,7 @@ import Random from './../random'
 import {DEFAULT_AGENT} from './../config';
 import {COLORS} from './../config';
 import {CLR} from './../config';
+import mathUtils from '../utils/mathUtils';
 
 class Agent extends PIXI.Container {
     constructor(_location, mass = .5) {
@@ -41,7 +42,7 @@ class Agent extends PIXI.Container {
         this.body.alpha = .5;
         this.body.beginFill(this.color);
         //TODO -> UTILS MAP
-        let r = Math.ceil(this.mass * 5);
+        let r = Math.ceil(this.mass) * 5;
         this.body.drawCircle(0, 0, r);
         this.body.endFill();
         //this.body.cacheAsBitmap = true;
@@ -52,7 +53,8 @@ class Agent extends PIXI.Container {
         this.vDebug.moveTo(0, 0);
         this.vDebug.lineTo(30, 0);
 
-        //this.addChild(this.body);
+        this.body.blendMode = PIXI.BLEND_MODES.ADD;
+        this.addChild(this.body);
         this.addChild(this.vDebug);
 
         //console.log(DEFAULT_AGENT)
@@ -69,6 +71,13 @@ class Agent extends PIXI.Container {
 
         // apply the steering force
         this.applyForce(this.vSteer);
+    }
+
+
+    flee(vTarget) {
+        this.vecDesired = Vector2.subtract(vTarget, this.location).normalize().multiplyScalar(this.SEEK_MAX_SPEED);
+
+
     }
 
     wander(jX, jY, strength) {

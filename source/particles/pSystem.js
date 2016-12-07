@@ -9,7 +9,7 @@ import {DEFAULT_AGENT} from '../config';
 import {INPUT_DATA} from '../config';
 import Agent from '../particles/agent';
 import Bounds from '../particles/bounds';
-import mathUtils from '../math/mathUtils';
+import mathUtils from '../utils/mathUtils';
 import {Vector2} from '../math/vector2';
 import Random from '../random'
 
@@ -33,7 +33,7 @@ class ParticleSystem extends PIXI.Container {
         console.log(mathUtils.getRandomBetween())
         console.log(mathUtils.getRandomBetween())
     }
-    
+
 
     addParticle(_mass = 1, _location) {
         if (_location === undefined) _location = this.origin;
@@ -65,6 +65,12 @@ class ParticleSystem extends PIXI.Container {
     seek(vTarget) {
         this.particles.forEach(agent => {
             agent.seek(vTarget);
+        });
+    }
+
+    flee(vTarget) {
+        this.particles.forEach(agent => {
+            agent.flee(vTarget);
         });
     }
 

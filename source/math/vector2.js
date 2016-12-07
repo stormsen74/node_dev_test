@@ -10,7 +10,7 @@
  * Created by STORMSEN on 29.11.2016.
  */
 
-import mathUtils from '../math/mathUtils';
+import mathUtils from '../utils/mathUtils';
 
 
 function Vector2(x, y) {
@@ -539,7 +539,7 @@ Vector2.prototype = {
 
         return this;
     },
-    
+
     // TODO ???
     wander(value) {
 
@@ -580,6 +580,12 @@ Vector2.multiply = function (v, m) {
 
 Vector2.divide = function (v, d) {
     return new Vector2(v.x / d, v.y / d);
+}
+
+Vector2.getDistance = function (v1, v2) {
+    var dx = v2.x - v1.x;
+    var dy = v2.y - v1.y;
+    return Math.sqrt(dx * dx + dy * dy);
 }
 
 Vector2.getAngleRAD = function (v) {
