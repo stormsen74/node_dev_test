@@ -17,6 +17,9 @@ class Agent extends PIXI.Container {
 
         this.SEEK_MAX_SPEED = 10;
         this.SEEK_MAX_FORCE = .15;
+        this.FLEE_MAX_SPEED = 10;
+        this.FLEE_MAX_FORCE = 1;
+        this.FLEE_RADIUS = 400;
         this.VELOCITY_MIN = 0.05;
         this.VELOCITY_MAX = 15;
         this.TAIL_LENGTH = 20;
@@ -52,6 +55,7 @@ class Agent extends PIXI.Container {
         this.vDebug.moveTo(0, 0);
         this.vDebug.lineTo(30, 0);
 
+
         // this.body.blendMode = PIXI.BLEND_MODES.ADD;
         this.addChild(this.body);
         this.addChild(this.vDebug);
@@ -74,15 +78,15 @@ class Agent extends PIXI.Container {
 
 
     flee(vTarget) {
-        this.vecDesired = Vector2.subtract(this.location, vTarget).normalize().multiplyScalar(this.SEEK_MAX_SPEED);
+        this.vecDesired = Vector2.subtract(this.location, vTarget).normalize().multiplyScalar(this.FLEE_MAX_SPEED);
 
-        let force = 1 - (Vector2.getDistance(this.location, vTarget) / 200);
+        let force = 1 - (Vector2.getDistance(this.location, vTarget) / this.FLEE_RADIUS);
         if (force < 0) force = 0;
         // console.log(force)
         this.vSteer = Vector2.subtract(this.vecDesired, this.velocity).normalize().multiplyScalar(force);
 
         // limit the magnitude of the steering force.
-        this.vSteer.clampLength(0, .5);
+        this.vSteer.clampLength(0, this.FLEE_MAX_FORCE);
 
         // apply the steering force
         this.applyForce(this.vSteer);
@@ -92,7 +96,7 @@ class Agent extends PIXI.Container {
 
     wander(jX, jY, strength) {
         this.vWander.jitter(jX, jY);
-        this.vWander.normalize().multiplyScalar(.05);
+        this.vWander.normalize().multiplyScalar(.11);
         this.applyForce(this.vWander);
     }
 

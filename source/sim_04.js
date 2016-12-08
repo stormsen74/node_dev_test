@@ -23,7 +23,7 @@ class Sim_04 extends Sim {
 
         this.size = _size;
 
-        this.repeller = new Repeller(new Vector2(200, 300), 30)
+        this.repeller = new Repeller(new Vector2(900, 250), 50)
         this.attractor = new Attractor(new Vector2(_size.WIDTH * .5, _size.HEIGHT * .5), 60)
 
         let origin = new Vector2(_size.WIDTH * .5, _size.HEIGHT * .5)
@@ -84,10 +84,10 @@ class Sim_04 extends Sim {
     update() {
 
         //this.pSystem.wander(-.1, .1);
-        // this.pSystem.applyRepeller(this.repeller);
-        this.pSystem.applyFriction(0.05);
-        this.pSystem.applyAttractor(this.attractor);
-        // this.pSystem.flee(this.vMouse);
+        this.pSystem.applyFriction(0.2);
+        //this.pSystem.applyAttractor(this.attractor);
+        //this.pSystem.applyRepeller(this.repeller);
+        this.pSystem.flee(this.vMouse);
         // this.pSystem.applyForce(this.GRAVITY);
 
 

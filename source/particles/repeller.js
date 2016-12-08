@@ -11,7 +11,7 @@ class Repeller extends PIXI.Container {
 
         this.location = _location;
         this.radius = _radius;
-        this.strength = 100;
+        this.strength = 750;
 
         this.gfx = new PIXI.Graphics();
 

@@ -63,19 +63,35 @@ class Demo {
         let _screen = document.getElementById('screen');
 
         let rendererOptions = {
-            transparent: false,
-            backgroundColor: 0x404040,
-            resolution: 1,
-            antialias: true,
-            autoResize: false,
-            roundPixels: true //performance
-        };
+                transparent: false,
+                backgroundColor: 0x404040,
+                resolution: 1,
+                antialias: true,
+                autoResize: false,
+                autoClear: false,
+                roundPixels: true //performance
+            }
+            ;
 
         this.renderer = new PIXI.autoDetectRenderer(this.size.w, this.size.h, rendererOptions);
         _screen.appendChild(this.renderer.view);
 
         this.stage = new PIXI.Container();
         this.stage.interactive = true;
+
+
+        // render texture*
+        //this.renderTexture = new PIXI.RenderTexture(this.renderer, this.size.w, this.size.h);
+        //this.renderTexture2 = new PIXI.RenderTexture(this.renderer, this.size.w, this.size.h);
+        //this.outputSprite = new PIXI.Sprite(this.renderTexture);
+        //this.stage.addChild(this.outputSprite);
+        //
+        //this.bg = new PIXI.Graphics();
+        //this.bg.beginFill(rendererOptions.backgroundColor, 0.5);
+        //this.bg.drawRect(0, 0, this.size.w, this.size.h);
+        //this.bg.endFill();
+        //this.bg.cacheAsBitmap = true;
+        //this.stage.addChild(this.bg);
 
     }
 
@@ -95,6 +111,18 @@ class Demo {
     render() {
 
         this.renderer.render(this.stage);
+
+
+        // render texture*
+
+        // swap the buffers ...
+        //let temp = this.renderTexture;
+        //this.renderTexture = this.renderTexture2;
+        //this.renderTexture2 = temp;
+        //this.outputSprite.texture = this.renderTexture;
+        //
+        //this.renderTexture2.render(this.stage, null, false);
+        //this.renderer.render(this.stage);
 
     }
 
