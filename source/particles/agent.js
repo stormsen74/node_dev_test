@@ -17,14 +17,14 @@ class Agent extends PIXI.Container {
 
         this.SEEK_MAX_SPEED = 10;
         this.SEEK_MAX_FORCE = .15;
-        this.VELOCITY_MIN = 1;
+        this.VELOCITY_MIN = 0.05;
         this.VELOCITY_MAX = 15;
         this.TAIL_LENGTH = 20;
 
 
         this.mass = mass;
         this.location = new Vector2(_location.x, _location.y);
-        this.velocity = new Vector2();
+        this.velocity = new Vector2(.0001, .0001);
         this.acceleration = new Vector2();
         this.angle = 0;
 
@@ -41,7 +41,6 @@ class Agent extends PIXI.Container {
         this.body = new PIXI.Graphics();
         this.body.alpha = .5;
         this.body.beginFill(this.color);
-        //TODO -> UTILS MAP
         let r = Math.ceil(this.mass) * 5;
         this.body.drawCircle(0, 0, r);
         this.body.endFill();
@@ -53,7 +52,7 @@ class Agent extends PIXI.Container {
         this.vDebug.moveTo(0, 0);
         this.vDebug.lineTo(30, 0);
 
-        this.body.blendMode = PIXI.BLEND_MODES.ADD;
+        // this.body.blendMode = PIXI.BLEND_MODES.ADD;
         this.addChild(this.body);
         this.addChild(this.vDebug);
 
@@ -75,7 +74,18 @@ class Agent extends PIXI.Container {
 
 
     flee(vTarget) {
-        this.vecDesired = Vector2.subtract(vTarget, this.location).normalize().multiplyScalar(this.SEEK_MAX_SPEED);
+        this.vecDesired = Vector2.subtract(this.location, vTarget).normalize().multiplyScalar(this.SEEK_MAX_SPEED);
+
+        let force = 1 - (Vector2.getDistance(this.location, vTarget) / 200);
+        if (force < 0) force = 0;
+        // console.log(force)
+        this.vSteer = Vector2.subtract(this.vecDesired, this.velocity).normalize().multiplyScalar(force);
+
+        // limit the magnitude of the steering force.
+        this.vSteer.clampLength(0, .5);
+
+        // apply the steering force
+        this.applyForce(this.vSteer);
 
 
     }

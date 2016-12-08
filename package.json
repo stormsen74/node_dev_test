@@ -11,6 +11,7 @@
   "description": "",
   "dependencies": {
     "colormap": "^2.2.0",
+    "gsap": "^1.19.0",
     "pixi.js": "^4.2.2",
     "postprocessing": "^1.1.6",
     "raf": "^3.3.0",

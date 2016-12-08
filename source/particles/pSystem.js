@@ -23,6 +23,8 @@ class ParticleSystem extends PIXI.Container {
         this.origin = _origin;
         this.bounds = new Bounds(0, 0, this.size.WIDTH, this.size.HEIGHT);
 
+        this.vFriction = new Vector2();
+
 
         this.gfx = new PIXI.Graphics();
         this.gfx.blendMode = PIXI.BLEND_MODES.ADD;
@@ -38,8 +40,16 @@ class ParticleSystem extends PIXI.Container {
     addParticle(_mass = 1, _location) {
         if (_location === undefined) _location = this.origin;
         let agent = new Agent(_location, _mass);
+        agent.acceleration.set(Random.sign() * 3, Random.sign() * 3)
         this.addChild(agent);
         this.particles.push(agent);
+    }
+
+    applyFriction(strength) {
+        this.particles.forEach(agent => {
+            this.vFriction.set(agent.velocity.x, agent.velocity.y).multiplyScalar(-1).normalize().multiplyScalar(strength);
+            agent.applyForce(this.vFriction);
+        });
     }
 
     applyForce(f) {

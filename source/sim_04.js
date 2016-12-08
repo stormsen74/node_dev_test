@@ -2,6 +2,8 @@
  * Created by STORMSEN on 01.12.2016.
  */
 
+var gsap = require('gsap')
+
 import {Vector2} from './math/vector2';
 import Agent from './particles/agent';
 import ParticleSystem from './particles/pSystem';
@@ -25,7 +27,7 @@ class Sim_04 extends Sim {
         this.attractor = new Attractor(new Vector2(_size.WIDTH * .5, _size.HEIGHT * .5), 60)
 
         let origin = new Vector2(_size.WIDTH * .5, _size.HEIGHT * .5)
-        this.GRAVITY = new Vector2(0, .05)
+        this.GRAVITY = new Vector2(0, .5)
 
 
         this.pSystem = new ParticleSystem(_size, origin);
@@ -36,15 +38,29 @@ class Sim_04 extends Sim {
 
         //this.init();
         this.update();
+
+
+    }
+
+    addParticle() {
+        this.pSystem.addParticle(mathUtils.getRandomBetween(1, 9), this.vMouse);
+    }
+
+    spread() {
+        if (this.vMouse.pressed) {
+            TweenMax.delayedCall(.1, this.spread.bind(this))
+            this.addParticle();
+        }
     }
 
     onPointerDown(event) {
         this.vMouse.pressed = true;
-        this.pSystem.addParticle(mathUtils.getRandomBetween(1, 9), this.vMouse);
+        this.spread();
     }
 
     onPointerUp(event) {
         this.vMouse.pressed = false;
+        TweenMax.killDelayedCallsTo(this.spread)
     }
 
 
@@ -68,9 +84,10 @@ class Sim_04 extends Sim {
     update() {
 
         //this.pSystem.wander(-.1, .1);
-        this.pSystem.applyRepeller(this.repeller);
+        // this.pSystem.applyRepeller(this.repeller);
+        this.pSystem.applyFriction(0.05);
         this.pSystem.applyAttractor(this.attractor);
-        this.pSystem.seek(this.vMouse);
+        // this.pSystem.flee(this.vMouse);
         // this.pSystem.applyForce(this.GRAVITY);
 
 
