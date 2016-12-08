@@ -40,4 +40,10 @@ else window.addEventListener('load', init);
 
 
 
+//uglifyjs --compress --mangle --output dev.min.js --
+//bundle.js
+
+
+
+
 
