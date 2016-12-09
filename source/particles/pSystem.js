@@ -27,7 +27,7 @@ class ParticleSystem extends PIXI.Container {
 
 
         this.gfx = new PIXI.Graphics();
-        this.gfx.blendMode = PIXI.BLEND_MODES.ADD;
+        // this.gfx.blendMode = PIXI.BLEND_MODES.ADD;
         this.addChild(this.gfx);
 
         //this.init();
@@ -81,6 +81,12 @@ class ParticleSystem extends PIXI.Container {
     flee(vTarget) {
         this.particles.forEach(agent => {
             agent.flee(vTarget);
+        });
+    }
+
+    separate() {
+        this.particles.forEach(agent => {
+            agent.separate(this.particles);
         });
     }
 

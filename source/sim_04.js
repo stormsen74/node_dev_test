@@ -83,11 +83,13 @@ class Sim_04 extends Sim {
 
     update() {
 
-        //this.pSystem.wander(-.1, .1);
-        this.pSystem.applyFriction(0.2);
-        //this.pSystem.applyAttractor(this.attractor);
+        this.pSystem.wander(-.1, .1);
+        this.pSystem.applyFriction(0.1);
+        this.pSystem.applyAttractor(this.attractor);
         //this.pSystem.applyRepeller(this.repeller);
-        this.pSystem.flee(this.vMouse);
+        // this.pSystem.flee(this.vMouse);
+        // this.pSystem.seek(this.vMouse);
+        // this.pSystem.separate();
         // this.pSystem.applyForce(this.GRAVITY);
 
 
