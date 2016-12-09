@@ -23,8 +23,17 @@ class Sim_04 extends Sim {
 
         this.size = _size;
 
-        this.repeller = new Repeller(new Vector2(900, 250), 50)
+        this.repeller = new Repeller(new Vector2(900, 250), 50);
+        this.repeller.on('startDrag', this.onStartDrag.bind(this));
+        this.repeller.on('stopDrag', this.onStopDrag.bind(this));
+
         this.attractor = new Attractor(new Vector2(_size.WIDTH * .5, _size.HEIGHT * .5), 60)
+        this.attractor.on('startDrag', this.onStartDrag.bind(this));
+        this.attractor.on('stopDrag', this.onStopDrag.bind(this));
+
+        this.attractor2 = new Attractor(new Vector2(_size.WIDTH * .5 + 100, _size.HEIGHT * .5 + 100), 40)
+        this.attractor2.on('startDrag', this.onStartDrag.bind(this));
+        this.attractor2.on('stopDrag', this.onStopDrag.bind(this));
 
         let origin = new Vector2(_size.WIDTH * .5, _size.HEIGHT * .5)
         this.GRAVITY = new Vector2(0, .5)
@@ -32,9 +41,10 @@ class Sim_04 extends Sim {
 
         this.pSystem = new ParticleSystem(_size, origin);
 
-        this.addChild(this.repeller)
-        this.addChild(this.attractor)
         this.addChild(this.pSystem)
+        this.addChild(this.attractor)
+        this.addChild(this.attractor2)
+        this.addChild(this.repeller)
 
         //this.init();
         this.update();
@@ -42,12 +52,21 @@ class Sim_04 extends Sim {
 
     }
 
+    onStartDrag() {
+        this.vMouse.emit = false;
+    }
+
+    onStopDrag() {
+        this.vMouse.emit = true;
+    }
+
+
     addParticle() {
-        this.pSystem.addParticle(mathUtils.getRandomBetween(1, 9), this.vMouse);
+        this.pSystem.addParticle(mathUtils.getRandomBetween(1, 5), this.vMouse);
     }
 
     spread() {
-        if (this.vMouse.pressed) {
+        if (this.vMouse.pressed && this.vMouse.emit) {
             TweenMax.delayedCall(.1, this.spread.bind(this))
             this.addParticle();
         }
@@ -60,6 +79,7 @@ class Sim_04 extends Sim {
 
     onPointerUp(event) {
         this.vMouse.pressed = false;
+
         TweenMax.killDelayedCallsTo(this.spread)
     }
 
@@ -86,9 +106,9 @@ class Sim_04 extends Sim {
         this.pSystem.wander(-.1, .1);
         this.pSystem.applyFriction(0.1);
         this.pSystem.applyAttractor(this.attractor);
-        //this.pSystem.applyRepeller(this.repeller);
+        this.pSystem.applyRepeller(this.repeller);
         // this.pSystem.flee(this.vMouse);
-        // this.pSystem.seek(this.vMouse);
+         this.pSystem.seek(this.vMouse);
         // this.pSystem.separate();
         // this.pSystem.applyForce(this.GRAVITY);
 

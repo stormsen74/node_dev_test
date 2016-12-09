@@ -14,6 +14,8 @@ class Sim extends PIXI.Container {
 
         this.vMouse = new Vector2();
         this.vMouse.pressed = false;
+        this.vMouse.emit = true;
+        this.interactive = true;
 
         this.initListener();
 

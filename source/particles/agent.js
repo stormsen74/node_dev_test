@@ -16,7 +16,7 @@ class Agent extends PIXI.Container {
         super();
 
         this.SEEK_MAX_SPEED = 10;
-        this.SEEK_MAX_FORCE = 1;
+        this.SEEK_MAX_FORCE = .5;
         this.FLEE_MAX_SPEED = 10;
         this.FLEE_MAX_FORCE = 1;
         this.FLEE_RADIUS = 400;
@@ -111,7 +111,7 @@ class Agent extends PIXI.Container {
 
     wander(jX, jY, strength) {
         this.vecWander.jitter(jX, jY);
-        this.vecWander.normalize().multiplyScalar(.15);
+        this.vecWander.normalize().multiplyScalar(.125);
         this.applyForce(this.vecWander);
     }
 
