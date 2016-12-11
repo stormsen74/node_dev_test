@@ -45,6 +45,11 @@ class ParticleSystem extends PIXI.Container {
         this.particles.push(agent);
     }
 
+    //TODO
+    applyBehavior() {
+
+    }
+
     applyFriction(strength) {
         this.particles.forEach(agent => {
             this.vFriction.set(agent.velocity.x, agent.velocity.y).multiplyScalar(-1).normalize().multiplyScalar(strength);

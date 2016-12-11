@@ -5,6 +5,7 @@
 var raf = require('raf')
 var PIXI = require('pixi.js');
 
+
 import Sim from './sim';
 import Sim_01 from './sim_01';
 import Sim_02 from './sim_02';
@@ -12,6 +13,10 @@ import Sim_03 from './sim_03';
 import Sim_04 from './sim_04';
 
 import { DEFAULT_SIZE } from './config';
+
+
+var turbojs = require('turbojs');
+import {Vector2} from './math/vector2';
 
 class Demo {
 
@@ -29,10 +34,95 @@ class Demo {
 
         this.sim = new Sim_04(DEFAULT_SIZE)
 
-
         this.init_PIXI_Renderer();
         this.initSim();
 
+        //this.initTurboTest();
+        this.seek_default();
+        this.seek_light();
+
+    }
+
+    seek_default() {
+        let location = new Vector2(100, 100)
+        let velocity = new Vector2(.01, .01)
+        let vTarget = new Vector2(500, 500)
+        let SEEK_MAX_SPEED = 10;
+        let SEEK_MAX_FORCE = .5;
+        this.vecDesired = Vector2.subtract(vTarget, location).normalize().multiplyScalar(SEEK_MAX_SPEED);
+        this.vecSteer = Vector2.subtract(this.vecDesired, velocity).clampLength(0, SEEK_MAX_FORCE);
+
+        console.log('seek_default', this.vecSteer);
+        //this.applyForce(this.vecSteer);
+    }
+
+
+    seek_light() {
+        let location = new Vector2(100, 100)
+        let velocity = new Vector2(.01, .01)
+        let vTarget = new Vector2(500, 500)
+        let SEEK_MAX_SPEED = 10.01;
+        let SEEK_MAX_FORCE = 0.5;
+
+        var crunch = turbojs.alloc(4);
+
+        crunch.data[0] = location.x
+        crunch.data[1] = location.y
+
+        crunch.data[2] = vTarget.x
+        crunch.data[3] = vTarget.y
+
+        this.vecDesired = Vector2.subtract(vTarget, location)
+        this.vecDesired.normalize()
+        this.vecDesired.multiplyScalar(SEEK_MAX_SPEED);
+
+        this.vecSteer = Vector2.subtract(this.vecDesired, velocity)
+        this.vecSteer.clampLength(0, SEEK_MAX_FORCE);
+
+        turbojs.run(crunch, `void main(void) {
+
+        vec2 vLocation = vec2(${location.x},${location.y});
+        vec2 velocity = vec2(${velocity.x},${velocity.y});
+	    vec2 vTarget = vec2(${vTarget.x},${vTarget.y});
+
+	    vec2 vecDesired = normalize(vTarget-vLocation)*${SEEK_MAX_SPEED};
+	    vec2 vecSteer = clamp(vecDesired-velocity,.0,${SEEK_MAX_FORCE});
+
+        commit(vec4(vecSteer.rg, 0., 0.));
+
+        }`);
+        //vec2 velocityClamp = clamp(velocity, 0.0, ${SEEK_MAX_FORCE})
+
+        console.log(crunch.data.subarray(0, 2));
+
+        console.log('seek_light', this.vecSteer);
+        //this.applyForce(this.vecSteer);
+    }
+
+    initTurboTest() {
+
+        var crunch = turbojs.alloc(4);
+
+        crunch.data[0] = 1.5
+        crunch.data[1] = 1.5
+
+        crunch.data[2] = 2.
+        crunch.data[3] = 2.
+
+
+        turbojs.run(crunch, `void main(void) {
+        vec4 vinput = read();
+        vec2 v0 = vec2(vinput.rg);
+	    vec2 v1 = vec2(vinput.ba);
+	    vec2 result = v0*v1;
+
+
+        commit(vec4(result.rg, 0., 0.));
+
+        }`);
+
+
+        console.log(crunch.data.subarray(0, 2));
     }
 
     resize(width, height) {
@@ -110,7 +200,7 @@ class Demo {
 
     render() {
 
-         this.renderer.render(this.stage);
+        this.renderer.render(this.stage);
 
 
         // render texture*

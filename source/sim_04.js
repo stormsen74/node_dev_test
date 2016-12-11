@@ -23,7 +23,7 @@ class Sim_04 extends Sim {
 
         this.size = _size;
 
-        this.repeller = new Repeller(new Vector2(900, 250), 50);
+        this.repeller = new Repeller(new Vector2(900, 250), 100);
         this.repeller.on('startDrag', this.onStartDrag.bind(this));
         this.repeller.on('stopDrag', this.onStopDrag.bind(this));
 
@@ -67,7 +67,7 @@ class Sim_04 extends Sim {
 
     spread() {
         if (this.vMouse.pressed && this.vMouse.emit) {
-            TweenMax.delayedCall(.1, this.spread.bind(this))
+            TweenMax.delayedCall(.05, this.spread.bind(this))
             this.addParticle();
         }
     }
@@ -103,18 +103,18 @@ class Sim_04 extends Sim {
 
     update() {
 
-        this.pSystem.wander(-.1, .1);
+        //this.pSystem.wander(-.1, .1);
         this.pSystem.applyFriction(0.1);
-        this.pSystem.applyAttractor(this.attractor);
-        this.pSystem.applyRepeller(this.repeller);
-        // this.pSystem.flee(this.vMouse);
-         this.pSystem.seek(this.vMouse);
+        //this.pSystem.applyAttractor(this.attractor);
+        //this.pSystem.applyRepeller(this.repeller);
+        this.pSystem.flee(this.vMouse);
+        //this.pSystem.seek(this.vMouse);
         // this.pSystem.separate();
         // this.pSystem.applyForce(this.GRAVITY);
 
 
         this.pSystem.update();
-        this.pSystem.drawTail();
+        //this.pSystem.drawTail();
 
 
         // inherit

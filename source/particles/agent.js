@@ -3,6 +3,7 @@
  */
 
 var PIXI = require('pixi.js');
+var turbojs = require('turbojs');
 import {Vector2} from './../math/vector2';
 import Random from './../random'
 
@@ -15,11 +16,11 @@ class Agent extends PIXI.Container {
     constructor(_location, mass = .5) {
         super();
 
-        this.SEEK_MAX_SPEED = 10;
-        this.SEEK_MAX_FORCE = .5;
-        this.FLEE_MAX_SPEED = 10;
-        this.FLEE_MAX_FORCE = 1;
-        this.FLEE_RADIUS = 400;
+        this.SEEK_MAX_SPEED = 15;
+        this.SEEK_MAX_FORCE = 0.3;
+        this.FLEE_MAX_SPEED = 15;
+        this.FLEE_MAX_FORCE = .5;
+        this.FLEE_RADIUS = 150;
         this.VELOCITY_MIN = 0.05;
         this.VELOCITY_MAX = 15;
         this.TAIL_LENGTH = 20;
@@ -33,7 +34,6 @@ class Agent extends PIXI.Container {
 
         this.vecDesired = new Vector2();
         this.vecSteer = new Vector2();
-        this.vecSteerSeperate = new Vector2();
         this.vecSumSeperate = new Vector2();
         this.vecForce = new Vector2();
         this.vecWander = new Vector2();
@@ -46,7 +46,7 @@ class Agent extends PIXI.Container {
         this.color = Random.item(COLORS);
 
         this.body = new PIXI.Graphics();
-        this.body.alpha = .5;
+        this.body.alpha = .2;
         this.body.beginFill(this.color);
         let r = Math.ceil(this.mass) * 5;
         this.SEPERATE_RADIUS = 2 * r;
@@ -57,34 +57,44 @@ class Agent extends PIXI.Container {
         this.vDebug = new PIXI.Graphics();
         this.vDebug.lineStyle(1, this.color);
         // this.vDebug.x += r;
+
         this.vDebug.moveTo(0, 0);
-        this.vDebug.lineTo(30, 0);
+        this.vDebug.lineTo(1.5 * r, 0);
 
 
-        // this.body.blendMode = PIXI.BLEND_MODES.ADD;
-        // this.addChild(this.body);
-        // this.addChild(this.vDebug);
+        this.addChild(this.body);
+        this.addChild(this.vDebug);
+        this.body.blendMode = PIXI.BLEND_MODES.ADD;
 
         //console.log(DEFAULT_AGENT)
+
     }
 
 
     seek(vTarget) {
         this.vecDesired = Vector2.subtract(vTarget, this.location).normalize().multiplyScalar(this.SEEK_MAX_SPEED);
         this.vecSteer = Vector2.subtract(this.vecDesired, this.velocity).clampLength(0, this.SEEK_MAX_FORCE);
+
         this.applyForce(this.vecSteer);
     }
 
 
     flee(vTarget) {
         this.vecDesired = Vector2.subtract(this.location, vTarget).normalize().multiplyScalar(this.FLEE_MAX_SPEED);
-        this.vecForce = Math.max(1 - (Vector2.getDistance(this.location, vTarget) / this.FLEE_RADIUS), 0);
-        this.vecSteer = Vector2.subtract(this.vecDesired, this.velocity).normalize().multiplyScalar(this.vecForce).clampLength(0, this.FLEE_MAX_FORCE);
-        this.applyForce(this.vecSteer);
+        let force = Math.max(1 - (Vector2.getDistance(this.location, vTarget) / this.FLEE_RADIUS), 0);
+        this.vecSteer = Vector2.subtract(this.vecDesired, this.velocity).normalize().multiplyScalar(force).clampLength(0, this.FLEE_MAX_FORCE);
+
+        //console.log('do!', Vector2.getDistance(vTarget, this.position))
+
+        if (Vector2.getDistance(vTarget, this.position) < this.FLEE_RADIUS) {
+            this.applyForce(this.vecSteer);
+        } else {
+            this.seek(vTarget)
+        }
     }
 
     separate(agents) {
-        this.vecSteerSeperate.multiplyScalar(0);
+        this.vecSteer.multiplyScalar(0);
         this.vecSumSeperate.multiplyScalar(0);
 
         let count = 0, d, diff;
@@ -99,9 +109,9 @@ class Agent extends PIXI.Container {
 
         if (count > 0) {
             this.vecSumSeperate.divideScalar(count).normalize().multiplyScalar(1.5);
-            this.vecSteerSeperate = Vector2.subtract(this.vecSumSeperate, this.velocity).clampLength(0, 10);
-            this.applyForce(this.vecSteerSeperate);
+            this.vecSteer = Vector2.subtract(this.vecSumSeperate, this.velocity).clampLength(0, 10);
 
+            this.applyForce(this.vecSteer);
         }
 
         //TODO getVector();
@@ -112,6 +122,7 @@ class Agent extends PIXI.Container {
     wander(jX, jY, strength) {
         this.vecWander.jitter(jX, jY);
         this.vecWander.normalize().multiplyScalar(.125);
+
         this.applyForce(this.vecWander);
     }
 
@@ -120,8 +131,8 @@ class Agent extends PIXI.Container {
      -------------------------------------------------*/
 
     applyForce(vForce) {
-        let force = Vector2.divide(vForce, this.mass);
-        this.acceleration.add(force);
+        this.vecForce = Vector2.divide(vForce, this.mass);
+        this.acceleration.add(this.vecForce);
     }
 
     /*------------------------------------------------
