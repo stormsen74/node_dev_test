@@ -16,8 +16,7 @@ export const DEFAULT_AGENT = {
 
 export const DEFAULT_SIZE = {
     WIDTH: 1280,
-    HEIGHT: 720,
-    RATIO: 1.777
+    HEIGHT: 720
 }
 
 export const SIM_DEFAULT = {
@@ -26,7 +25,7 @@ export const SIM_DEFAULT = {
 
 
 export const INPUT_DATA = {
-    POINTER_LOCATION: new Vector2(100,100)
+    POINTER_LOCATION: new Vector2(100, 100)
 }
 
 //export const MOUSE_MASS_PRESSED = 150;
@@ -39,13 +38,36 @@ export const INPUT_DATA = {
 //export const GRAVITY = 9.81;
 //export const TOGGLE = 0.08;
 
-export const COLORS = [
+export const PALETTE = [
     0xFF4746,
     0xE8DA5E,
     0x92B55F,
     0x487D76
 ]
 
-export const CLR = {
-    PALETTE: []
+export const COLORS = {
+    VENUS: [
+        0x632416,
+        0xcc3a00,
+        0xff9e43,
+        0xffdc79,
+        0xffebad
+    ],
+    SHINYPHAN : [
+        0x222222,
+        0x0f2637,
+        0x5d4d48,
+        0xcce1e6,
+        0xe9e0c9
+    ]
 }
+
+export const SETTINGS = {
+    iterations: 50,
+    randomness: 0.25,
+    opposite: 0.1,
+    minAngle: 0.4,
+    minSide: 2
+}
+
+

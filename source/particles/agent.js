@@ -3,7 +3,6 @@
  */
 
 var PIXI = require('pixi.js');
-var turbojs = require('turbojs');
 import {Vector2} from './../math/vector2';
 import Random from './../random'
 
@@ -43,7 +42,7 @@ class Agent extends PIXI.Container {
 
         this.tail = [];
 
-        this.color = Random.item(COLORS);
+        this.color = Random.item(COLORS.SHINYPHAN);
 
         this.body = new PIXI.Graphics();
         this.body.alpha = .2;
