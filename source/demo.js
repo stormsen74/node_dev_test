@@ -11,6 +11,7 @@ import Sim_01 from './sim_01';
 import Sim_02 from './sim_02';
 import Sim_03 from './sim_03';
 import Sim_04 from './sim_04';
+import Sim_05 from './sim_05';
 
 import { DEFAULT_SIZE } from './config';
 
@@ -32,6 +33,7 @@ class Demo {
 
 
         this.sim = new Sim_04(DEFAULT_SIZE)
+        this.sim_t = new Sim_05(DEFAULT_SIZE)
 
         this.init_PIXI_Renderer();
         this.initSim();
@@ -101,7 +103,8 @@ class Demo {
 
     initSim() {
 
-        this.stage.addChild(this.sim)
+        //this.stage.addChild(this.sim)
+        this.stage.addChild(this.sim_t)
 
     }
 
@@ -109,6 +112,7 @@ class Demo {
     update() {
 
         this.sim.update();
+        this.sim_t.update();
 
     }
 
