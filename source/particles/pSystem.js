@@ -101,6 +101,12 @@ class ParticleSystem extends PIXI.Container {
         });
     }
 
+    applyField(field) {
+        this.particles.forEach(agent => {
+            agent.applyField(field);
+        });
+    }
+
 
     drawTail() {
         this.gfx.clear();
@@ -142,7 +148,7 @@ class ParticleSystem extends PIXI.Container {
 
         this.particles.forEach(agent => {
 
-            agent.bounce(this.bounds);
+            agent.wrap(this.bounds);
 
             agent.update();
 

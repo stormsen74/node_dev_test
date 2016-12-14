@@ -125,6 +125,25 @@ class Agent extends PIXI.Container {
         this.applyForce(this.vecWander);
     }
 
+    applyField(field) {
+        //flowField.lookup(this.location);
+
+        this.vecDesired = field.lookup(this.location);
+        // vecDesired.normalize();
+        // vecDesired.multiply(_seek_maxSpeed);
+        this.vSteer = Vector2.subtract(this.vecDesired, this.velocity).clampLength(0, 10);
+
+        // limit the magnitude of the steering force.
+        //this.limitMax(this.vSteer, this.SEEK_MAX_FORCE);
+
+        // apply the steering force
+        this.applyForce(this.vSteer);
+
+        //TODO getVector();
+        // return _vecSteer;
+
+    }
+
     /*------------------------------------------------
      apply force
      -------------------------------------------------*/

@@ -47,11 +47,11 @@ class Sim_04 extends Sim {
         this.flowField = new FlowField(_size);
         this.flowField.initPerlinField();
 
-        this.addChild(this.pSystem)
         this.addChild(this.flowField)
-        this.addChild(this.attractor)
-        this.addChild(this.attractor2)
-        this.addChild(this.repeller)
+        this.addChild(this.pSystem)
+        //this.addChild(this.attractor)
+        //this.addChild(this.attractor2)
+        //this.addChild(this.repeller)
 
         //this.init();
         this.update();
@@ -108,21 +108,23 @@ class Sim_04 extends Sim {
 
     update() {
 
-        //this.pSystem.wander(-.1, .1);
-        this.pSystem.applyFriction(0.1);
+        this.pSystem.wander(-.1, .1);
+        //this.pSystem.applyFriction(0.1);
         //this.pSystem.applyAttractor(this.attractor);
         //this.pSystem.applyRepeller(this.repeller);
-        this.pSystem.flee(this.vMouse);
+        this.flowField.stepPerlinField();
+        this.pSystem.applyField(this.flowField);
+        //this.pSystem.flee(this.vMouse);
         //this.pSystem.seek(this.vMouse);
         // this.pSystem.separate();
         // this.pSystem.applyForce(this.GRAVITY);
 
         this.pSystem.update();
+        //this.flowField.drawField();
         //this.pSystem.drawTail();
 
 
-        // this.flowField.perlinField();
-        // this.flowField.draw();
+        // this.flowField.drawField();
 
 
         // inherit
