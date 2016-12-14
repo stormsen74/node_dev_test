@@ -25,7 +25,7 @@
 // var POSTPROCESSING = require('postprocessing');
 var raf = require('raf')
 
-import Random from './random';
+import Random from './utils/random';
 
 import PixiSet from './pixiSet';
 

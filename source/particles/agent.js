@@ -4,7 +4,7 @@
 
 var PIXI = require('pixi.js');
 import {Vector2} from './../math/vector2';
-import Random from './../random'
+import Random from '../utils/random'
 
 import {DEFAULT_AGENT} from './../config';
 import {COLORS} from './../config';

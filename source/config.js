@@ -46,6 +46,12 @@ export const PALETTE = [
 ]
 
 export const COLORS = {
+    DEFAULT: [
+        0xFF4746,
+        0xE8DA5E,
+        0x92B55F,
+        0x487D76
+    ],
     VENUS: [
         0x632416,
         0xcc3a00,
@@ -53,7 +59,7 @@ export const COLORS = {
         0xffdc79,
         0xffebad
     ],
-    SHINYPHAN : [
+    SHINYPHAN: [
         0x222222,
         0x0f2637,
         0x5d4d48,

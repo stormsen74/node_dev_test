@@ -6,7 +6,7 @@
 
 var raf = require('raf')
 
-import Random from './random';
+import Random from './utils/random';
 import Demo from './demo';
 
 // http://www.2ality.com/

@@ -9,7 +9,7 @@ import {Vector2} from './math/vector2';
 import Agent from './particles/agent';
 import Sim from './sim';
 
-import Random from './random'
+import Random from './utils/random'
 
 import { SIM_DEFAULT } from './config';
 import { CLR } from './config';

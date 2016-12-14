@@ -13,7 +13,7 @@ import Sim_03 from './sim_03';
 import Sim_04 from './sim_04';
 import Sim_05 from './sim_05';
 
-import { DEFAULT_SIZE } from './config';
+import {DEFAULT_SIZE} from './config';
 
 
 import {Vector2} from './math/vector2';
@@ -33,7 +33,6 @@ class Demo {
 
 
         this.sim = new Sim_04(DEFAULT_SIZE)
-        this.sim_t = new Sim_05(DEFAULT_SIZE)
 
         this.init_PIXI_Renderer();
         this.initSim();
@@ -69,15 +68,14 @@ class Demo {
         let _screen = document.getElementById('screen');
 
         let rendererOptions = {
-                transparent: false,
-                backgroundColor: 0x404040,
-                resolution: 1,
-                antialias: true,
-                autoResize: false,
-                autoClear: false,
-                roundPixels: true //performance
-            }
-            ;
+            transparent: false,
+            backgroundColor: 0x404040,
+            resolution: 1,
+            antialias: true,
+            autoResize: false,
+            autoClear: false,
+            roundPixels: true //performance
+        }
 
         this.renderer = new PIXI.autoDetectRenderer(this.size.w, this.size.h, rendererOptions);
         _screen.appendChild(this.renderer.view);
@@ -103,8 +101,7 @@ class Demo {
 
     initSim() {
 
-        //this.stage.addChild(this.sim)
-        this.stage.addChild(this.sim_t)
+        this.stage.addChild(this.sim)
 
     }
 
@@ -112,7 +109,6 @@ class Demo {
     update() {
 
         this.sim.update();
-        this.sim_t.update();
 
     }
 

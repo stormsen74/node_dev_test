@@ -7,11 +7,12 @@ var gsap = require('gsap')
 import {Vector2} from './math/vector2';
 import Agent from './particles/agent';
 import ParticleSystem from './particles/pSystem';
+import FlowField from './particles/flowField';
 import Repeller from './particles/repeller';
 import Attractor from './particles/attractor';
 import mathUtils from './utils/mathUtils';
 import Sim from './sim';
-import Random from './random'
+import Random from './utils/random'
 
 import {SIM_DEFAULT} from './config';
 import {INPUT_DATA} from './config';
@@ -43,7 +44,11 @@ class Sim_04 extends Sim {
 
         this.pSystem = new ParticleSystem(_size, origin);
 
+        this.flowField = new FlowField(_size);
+        this.flowField.initPerlinField();
+
         this.addChild(this.pSystem)
+        this.addChild(this.flowField)
         this.addChild(this.attractor)
         this.addChild(this.attractor2)
         this.addChild(this.repeller)
@@ -51,24 +56,7 @@ class Sim_04 extends Sim {
         //this.init();
         this.update();
 
-        //this.gui = new dat.GUI();
-        //this.gui.add(SETTINGS, 'minSide').min(0).max(100).name('Min Side Length');
-        //this.gui.add(SETTINGS, 'minAngle').min(0.0).max(1.2).step(0.01).name('Min Angle (rad)');
-        //this.gui.add(SETTINGS, 'iterations').min(1).max(100).name('Iterations');
-        //this.gui.add(SETTINGS, 'randomness').min(0.0).max(1.0).step(0.01).name('Randomness');
-        //this.gui.add(SETTINGS, 'opposite').min(0.0).max(1.0).step(0.01).name('Opposite Sides');
-        //this.gui.add(this, 'test').name('Start / Stop');
-        //this.gui.close();
-
-
     }
-
-
-    test() {
-        console.log('call', SETTINGS.minSide)
-
-    }
-
 
     onStartDrag() {
         this.vMouse.emit = false;
@@ -77,7 +65,6 @@ class Sim_04 extends Sim {
     onStopDrag() {
         this.vMouse.emit = true;
     }
-
 
     addParticle() {
         this.pSystem.addParticle(mathUtils.getRandomBetween(1, 5), this.vMouse);
@@ -130,9 +117,12 @@ class Sim_04 extends Sim {
         // this.pSystem.separate();
         // this.pSystem.applyForce(this.GRAVITY);
 
-
         this.pSystem.update();
         //this.pSystem.drawTail();
+
+
+        // this.flowField.perlinField();
+        // this.flowField.draw();
 
 
         // inherit

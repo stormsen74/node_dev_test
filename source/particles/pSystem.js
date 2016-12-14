@@ -11,7 +11,7 @@ import Agent from '../particles/agent';
 import Bounds from '../particles/bounds';
 import mathUtils from '../utils/mathUtils';
 import {Vector2} from '../math/vector2';
-import Random from '../random'
+import Random from '../utils/random'
 
 class ParticleSystem extends PIXI.Container {
 
