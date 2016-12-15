@@ -45,8 +45,8 @@ class Sim_04 extends Sim {
         this.pSystem = new ParticleSystem(_size, origin);
 
         this.flowField = new FlowField(_size);
-        // this.flowField.initField();
-        this.flowField.initPerlinField();
+        this.flowField.initField();
+        // this.flowField.initPerlinField();
 
         this.addChild(this.flowField)
         this.addChild(this.pSystem)
@@ -68,12 +68,12 @@ class Sim_04 extends Sim {
     }
 
     addParticle() {
-        this.pSystem.addParticle(mathUtils.getRandomBetween(1, 5), this.vMouse);
+        this.pSystem.addParticle(this.vMouse, mathUtils.getRandomBetween(1, 5));
     }
 
     spread() {
         if (this.vMouse.pressed && this.vMouse.emit) {
-            TweenMax.delayedCall(.05, this.spread.bind(this))
+            TweenMax.delayedCall(.1, this.spread.bind(this))
             this.addParticle();
         }
     }
@@ -109,19 +109,19 @@ class Sim_04 extends Sim {
 
     update() {
 
-        this.pSystem.wander(-.1, .1);
-        this.pSystem.applyFriction(0.1);
+        // this.pSystem.wander(-.1, .1);
+        // this.pSystem.applyFriction(0.05);
         //this.pSystem.applyAttractor(this.attractor);
         //this.pSystem.applyRepeller(this.repeller);
-        this.flowField.stepPerlinField();
-        this.pSystem.applyField(this.flowField);
-        //this.pSystem.flee(this.vMouse);
-        //this.pSystem.seek(this.vMouse);
+        // this.pSystem.applyField(this.flowField);
+        // this.pSystem.flee(this.vMouse);
+        this.pSystem.seek(this.vMouse);
         // this.pSystem.separate();
         // this.pSystem.applyForce(this.GRAVITY);
 
         this.pSystem.update();
-        this.flowField.drawField();
+        // this.flowField.stepPerlinField();
+        // this.flowField.drawField();
         //this.pSystem.drawTail();
 
 

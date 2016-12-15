@@ -12,11 +12,11 @@ import {CLR} from './../config';
 import mathUtils from '../utils/mathUtils';
 
 class Agent extends PIXI.Container {
-    constructor(_location, mass = .5) {
+    constructor(_location, mass) {
         super();
 
-        this.SEEK_MAX_SPEED = 10;
-        this.SEEK_MAX_FORCE = 0.1;
+        this.SEEK_MAX_SPEED = 12;
+        this.SEEK_MAX_FORCE = 0.3;
         this.FLEE_MAX_SPEED = 15;
         this.FLEE_MAX_FORCE = .5;
         this.FLEE_RADIUS = 150;
@@ -27,8 +27,8 @@ class Agent extends PIXI.Container {
 
         this.mass = mass;
         this.location = new Vector2(_location.x, _location.y);
-        this.velocity = new Vector2(.0001, .0001);
-        this.acceleration = new Vector2();
+        this.velocity = new Vector2(.5 + Random() * .5, .5 + Random() * .5);
+        this.acceleration = new Vector2(.5 + Random() * .5, .5 + Random() * .5);
         this.angle = 0;
 
         this.vecDesired = new Vector2();
@@ -42,12 +42,12 @@ class Agent extends PIXI.Container {
 
         this.tail = [];
 
-        this.color = Random.item(COLORS.SHINYPHAN);
+        this.color = Random.item(COLORS.DEFAULT);
 
         this.body = new PIXI.Graphics();
         this.body.alpha = .2;
         this.body.beginFill(this.color);
-        let r = Math.ceil(this.mass) * 5;
+        let r = Math.ceil(this.mass) * 3;
         this.SEPERATE_RADIUS = 2 * r;
         this.body.drawCircle(0, 0, r);
         this.body.endFill();
@@ -129,8 +129,8 @@ class Agent extends PIXI.Container {
         //flowField.lookup(this.location);
 
         // this.vecDesired = field.lookup(this.location);
-        this.vecDesired = Vector2.subtract(field.lookup(this.location), this.location).normalize().multiplyScalar(this.SEEK_MAX_SPEED);
-        this.vecSteer = Vector2.subtract(this.vecDesired, this.velocity).clampLength(0, this.SEEK_MAX_FORCE);
+        // this.vecDesired = Vector2.subtract(field.lookup(this.location), this.location).normalize().multiplyScalar(this.SEEK_MAX_SPEED);
+        this.vecSteer = Vector2.subtract(field.lookup(this.location), this.velocity).clampLength(0, this.SEEK_MAX_FORCE);
 
         // limit the magnitude of the steering force.
         //this.limitMax(this.vSteer, this.SEEK_MAX_FORCE);

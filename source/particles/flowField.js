@@ -101,13 +101,13 @@ class FlowField extends PIXI.Container {
                 //vCell.set(Math.pow(fieldX, 2) - Math.pow(fieldY, 2), fieldX + fieldY);
 
                 // |x^2,y^2|
-                //vCell.set(Math.pow(fieldX, 2), Math.pow(fieldY, 2));
+                // this.vCell.set(Math.pow(this.fieldX, 2), Math.pow(this.fieldY, 2));
 
                 // |y^2,x^2|
-                //this.vCell.set(Math.pow(this.fieldY, 2), Math.pow(this.fieldX, 2));
+                // this.vCell.set(Math.pow(this.fieldY, 2), Math.pow(this.fieldX, 2));
 
                 // |cos(x^2+y),x+y^2+1|
-                //this.vCell.set(Math.cos(Math.pow(this.fieldX, 2) + this.fieldY), this.fieldX - Math.pow(this.fieldY, 2) + 1);
+                // this.vCell.set(Math.cos(Math.pow(this.fieldX, 2) + this.fieldY), this.fieldX - Math.pow(this.fieldY, 2) + 1);
 
                 /* ~ RULE ? */
 
@@ -117,8 +117,8 @@ class FlowField extends PIXI.Container {
 
                 let mag = this.vCell.length();
                 mag = 1 / mag;
-                this.vCell.normalize();
-                this.vCell.multiplyScalar(mag);
+                // this.vCell.normalize();
+                // this.vCell.multiplyScalar(mag);
 
                 this.vArray[i][j] = this.vCell.clone();
 
@@ -154,7 +154,7 @@ class FlowField extends PIXI.Container {
 
                 this.vCell.normalize();
                 let mag = Math.abs(this.SIMPLEX.noise2D(this.fieldX / this.FIELD_SCALE, this.fieldY / this.FIELD_SCALE)) * 15;
-                this.vCell.multiplyScalar(mag * 100);
+                this.vCell.multiplyScalar(mag);
 
                 this.vArray[i][j] = this.vCell.clone();
                 // console.log(i, j, this.vArray[i][j]);
@@ -187,7 +187,7 @@ class FlowField extends PIXI.Container {
 
 
                 this.vCell.normalize();
-                var mag = Math.abs(this.SIMPLEX.noise2D(this.fieldX / this.FIELD_SCALE, this.fieldY / this.FIELD_SCALE)) * 5;
+                var mag = Math.abs(this.SIMPLEX.noise2D(this.fieldX / this.FIELD_SCALE, this.fieldY / this.FIELD_SCALE)) * 15;
                 //var mag = Math.abs(noise.perlin3(this.fieldX / this.FIELD_SCALE, this.fieldY / this.FIELD_SCALE, this.t)) * 15;
                 this.vCell.multiplyScalar(mag);
 
