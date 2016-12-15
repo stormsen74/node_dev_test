@@ -15,13 +15,13 @@ class Agent extends PIXI.Container {
     constructor(_location, mass = .5) {
         super();
 
-        this.SEEK_MAX_SPEED = 15;
-        this.SEEK_MAX_FORCE = 0.3;
+        this.SEEK_MAX_SPEED = 10;
+        this.SEEK_MAX_FORCE = 0.1;
         this.FLEE_MAX_SPEED = 15;
         this.FLEE_MAX_FORCE = .5;
         this.FLEE_RADIUS = 150;
         this.VELOCITY_MIN = 0.05;
-        this.VELOCITY_MAX = 15;
+        this.VELOCITY_MAX = 10;
         this.TAIL_LENGTH = 20;
 
 
@@ -128,16 +128,15 @@ class Agent extends PIXI.Container {
     applyField(field) {
         //flowField.lookup(this.location);
 
-        this.vecDesired = field.lookup(this.location);
-        // vecDesired.normalize();
-        // vecDesired.multiply(_seek_maxSpeed);
-        this.vSteer = Vector2.subtract(this.vecDesired, this.velocity).clampLength(0, 10);
+        // this.vecDesired = field.lookup(this.location);
+        this.vecDesired = Vector2.subtract(field.lookup(this.location), this.location).normalize().multiplyScalar(this.SEEK_MAX_SPEED);
+        this.vecSteer = Vector2.subtract(this.vecDesired, this.velocity).clampLength(0, this.SEEK_MAX_FORCE);
 
         // limit the magnitude of the steering force.
         //this.limitMax(this.vSteer, this.SEEK_MAX_FORCE);
 
         // apply the steering force
-        this.applyForce(this.vSteer);
+        this.applyForce(this.vecSteer);
 
         //TODO getVector();
         // return _vecSteer;

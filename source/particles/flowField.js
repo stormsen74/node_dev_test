@@ -24,7 +24,7 @@ class FlowField extends PIXI.Container {
         this.vArray = [];
         this.vArray = [];
 
-        this.range = 5;
+        this.range = 10;
         //private t:number = 0;
         //private deltaT:number = 0.0025;
         this.vCell = new Vector2();

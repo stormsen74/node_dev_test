@@ -45,6 +45,7 @@ class Sim_04 extends Sim {
         this.pSystem = new ParticleSystem(_size, origin);
 
         this.flowField = new FlowField(_size);
+        // this.flowField.initField();
         this.flowField.initPerlinField();
 
         this.addChild(this.flowField)
@@ -109,7 +110,7 @@ class Sim_04 extends Sim {
     update() {
 
         this.pSystem.wander(-.1, .1);
-        //this.pSystem.applyFriction(0.1);
+        this.pSystem.applyFriction(0.1);
         //this.pSystem.applyAttractor(this.attractor);
         //this.pSystem.applyRepeller(this.repeller);
         this.flowField.stepPerlinField();
@@ -120,7 +121,7 @@ class Sim_04 extends Sim {
         // this.pSystem.applyForce(this.GRAVITY);
 
         this.pSystem.update();
-        //this.flowField.drawField();
+        this.flowField.drawField();
         //this.pSystem.drawTail();
 
 
