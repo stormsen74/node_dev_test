@@ -65,20 +65,12 @@ class FlowField extends PIXI.Container {
         this.gui.add(SETTINGS, 'iterations').min(1).max(100).name('Iterations');
         this.gui.add(SETTINGS, 'randomness').min(0.0).max(1.0).step(0.01).name('Randomness');
         this.gui.add(SETTINGS, 'opposite').min(0.0).max(1.0).step(0.01).name('Opposite Sides');
-        this.gui.add(this, 'test').name('drawField');
+        this.gui.add(this, 'drawField').name('drawField');
         //this.gui.close();
 
 
     }
 
-
-    test() {
-        //console.log('call', 5, SETTINGS.minSide);
-
-        this.drawField();
-
-
-    }
 
     initField() {
 
@@ -107,12 +99,12 @@ class FlowField extends PIXI.Container {
                 // this.vCell.set(Math.pow(this.fieldY, 2), Math.pow(this.fieldX, 2));
 
                 // |cos(x^2+y),x+y^2+1|
-                // this.vCell.set(Math.cos(Math.pow(this.fieldX, 2) + this.fieldY), this.fieldX - Math.pow(this.fieldY, 2) + 1);
+                 this.vCell.set(Math.cos(Math.pow(this.fieldX, 2) + this.fieldY), this.fieldX - Math.pow(this.fieldY, 2) + 1);
 
                 /* ~ RULE ? */
 
                 //http://demonstrations.wolfram.com/PhasePortraitAndFieldDirectionsOfTwoDimensionalLinearSystems/
-                this.vCell.set(a1 * this.fieldX + b1 * this.fieldY, a2 * this.fieldX + b2 * this.fieldY);
+                //this.vCell.set(a1 * this.fieldX + b1 * this.fieldY, a2 * this.fieldX + b2 * this.fieldY);
 
 
                 let mag = this.vCell.length();

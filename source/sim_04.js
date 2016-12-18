@@ -113,7 +113,7 @@ class Sim_04 extends Sim {
         // this.pSystem.applyFriction(0.05);
         //this.pSystem.applyAttractor(this.attractor);
         //this.pSystem.applyRepeller(this.repeller);
-        // this.pSystem.applyField(this.flowField);
+         this.pSystem.applyField(this.flowField);
         // this.pSystem.flee(this.vMouse);
         this.pSystem.seek(this.vMouse);
         // this.pSystem.separate();
