@@ -96,15 +96,15 @@ class FlowField extends PIXI.Container {
                 // this.vCell.set(Math.pow(this.fieldX, 2), Math.pow(this.fieldY, 2));
 
                 // |y^2,x^2|
-                // this.vCell.set(Math.pow(this.fieldY, 2), Math.pow(this.fieldX, 2));
+                this.vCell.set(Math.pow(this.fieldY, 2), Math.pow(this.fieldX, 2));
 
                 // |cos(x^2+y),x+y^2+1|
-                 this.vCell.set(Math.cos(Math.pow(this.fieldX, 2) + this.fieldY), this.fieldX - Math.pow(this.fieldY, 2) + 1);
+                //  this.vCell.set(Math.cos(Math.pow(this.fieldX, 2) + this.fieldY), this.fieldX - Math.pow(this.fieldY, 2) + 1);
 
                 /* ~ RULE ? */
 
                 //http://demonstrations.wolfram.com/PhasePortraitAndFieldDirectionsOfTwoDimensionalLinearSystems/
-                //this.vCell.set(a1 * this.fieldX + b1 * this.fieldY, a2 * this.fieldX + b2 * this.fieldY);
+                // this.vCell.set(a1 * this.fieldX + b1 * this.fieldY, a2 * this.fieldX + b2 * this.fieldY);
 
 
                 let mag = this.vCell.length();
