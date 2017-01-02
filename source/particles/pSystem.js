@@ -37,7 +37,7 @@ class ParticleSystem extends PIXI.Container {
     }
 
 
-    addParticle(_location, _mass,) {
+    addParticle(_location, _mass) {
         if (_location === undefined) _location = this.origin;
         let agent = new Agent(_location, _mass);
         //agent.acceleration.set(Random.sign() * 3, Random.sign() * 3)
@@ -148,7 +148,7 @@ class ParticleSystem extends PIXI.Container {
 
         this.particles.forEach(agent => {
 
-            agent.bounce(this.bounds);
+            agent.wrap(this.bounds);
 
             agent.update();
 

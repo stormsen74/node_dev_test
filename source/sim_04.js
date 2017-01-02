@@ -26,7 +26,7 @@ class Sim_04 extends Sim {
         this.size = _size;
 
 
-        this.repeller = new Repeller(new Vector2(900, 250), 100);
+        this.repeller = new Repeller(new Vector2(_size.WIDTH * .5, _size.HEIGHT * .5), 60);
         this.repeller.on('startDrag', this.onStartDrag.bind(this));
         this.repeller.on('stopDrag', this.onStopDrag.bind(this));
 
@@ -45,14 +45,15 @@ class Sim_04 extends Sim {
         this.pSystem = new ParticleSystem(_size, origin);
 
         this.flowField = new FlowField(_size);
-        this.flowField.initField();
+        //this.flowField.initField();
+        this.flowField.init2DSystemField();
         // this.flowField.initPerlinField();
 
         this.addChild(this.flowField)
         this.addChild(this.pSystem)
         //this.addChild(this.attractor)
         //this.addChild(this.attractor2)
-        //this.addChild(this.repeller)
+        this.addChild(this.repeller)
 
         //this.init();
         this.update();
@@ -109,13 +110,13 @@ class Sim_04 extends Sim {
 
     update() {
 
-        // this.pSystem.wander(-.1, .1);
+        this.pSystem.wander(-.1, .1);
         // this.pSystem.applyFriction(0.05);
         //this.pSystem.applyAttractor(this.attractor);
-        //this.pSystem.applyRepeller(this.repeller);
-         this.pSystem.applyField(this.flowField);
+        this.pSystem.applyRepeller(this.repeller);
+        this.pSystem.applyField(this.flowField);
         // this.pSystem.flee(this.vMouse);
-        this.pSystem.seek(this.vMouse);
+        //this.pSystem.seek(this.vMouse);
         // this.pSystem.separate();
         // this.pSystem.applyForce(this.GRAVITY);
 

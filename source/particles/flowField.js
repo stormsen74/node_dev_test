@@ -28,6 +28,7 @@ class FlowField extends PIXI.Container {
         //private t:number = 0;
         //private deltaT:number = 0.0025;
         this.vCell = new Vector2();
+        this.vMap = new Vector2();
         this.magVector = new Vector2();
         //private fieldX:number;
         //private fieldY:number;
@@ -60,24 +61,45 @@ class FlowField extends PIXI.Container {
         this.update();
 
         this.gui = new dat.GUI();
-        this.gui.add(SETTINGS, 'minSide').min(0).max(100).name('Min Side Length');
-        this.gui.add(SETTINGS, 'minAngle').min(0.0).max(1.2).step(0.01).name('Min Angle (rad)');
-        this.gui.add(SETTINGS, 'iterations').min(1).max(100).name('Iterations');
-        this.gui.add(SETTINGS, 'randomness').min(0.0).max(1.0).step(0.01).name('Randomness');
-        this.gui.add(SETTINGS, 'opposite').min(0.0).max(1.0).step(0.01).name('Opposite Sides');
+        this.gui.add(SETTINGS.system, 'a1').min(-3).max(3).step(0.01).name('a1').onChange(this.update2DSystem.bind(this));
+        this.gui.add(SETTINGS.system, 'a2').min(-3).max(3).step(0.01).name('a2').onChange(this.update2DSystem.bind(this));
+        this.gui.add(SETTINGS.system, 'b1').min(-3).max(3).step(0.01).name('a1').onChange(this.update2DSystem.bind(this));
+        this.gui.add(SETTINGS.system, 'b2').min(-3).max(3).step(0.01).name('b2').onChange(this.update2DSystem.bind(this));
         this.gui.add(this, 'drawField').name('drawField');
         //this.gui.close();
 
 
     }
 
+    update2DSystem() {
+        this.init2DSystemField();
+    }
+
+
+    init2DSystemField() {
+
+        //http://demonstrations.wolfram.com/PhasePortraitAndFieldDirectionsOfTwoDimensionalLinearSystems/
+
+        for (var i = 0, len = this.vArray.length; i < len; i++) {
+
+            this.fieldX = mathUtils.convertToRange(i, [0, this.range - 1], [-this.range * .5, this.range * .5]);
+
+            for (var j = 0, len = this.vArray.length; j < len; j++) {
+
+                this.fieldY = mathUtils.convertToRange(j, [0, this.range - 1], [-this.range * .5, this.range * .5]);
+
+                this.vCell.set(SETTINGS.system.a1 * this.fieldX + SETTINGS.system.b1 * this.fieldY, SETTINGS.system.a2 * this.fieldX + SETTINGS.system.b2 * this.fieldY);
+
+                this.vArray[i][j] = this.vCell.clone();
+
+            }
+        }
+
+        this.drawField();
+    }
+
 
     initField() {
-
-        let a1 = -2.5;
-        let b1 = 7;
-        let a2 = -6.75;
-        let b2 = -1.85;
 
         for (var i = 0; i < this.vArray.length; i++) {
 
@@ -96,19 +118,13 @@ class FlowField extends PIXI.Container {
                 // this.vCell.set(Math.pow(this.fieldX, 2), Math.pow(this.fieldY, 2));
 
                 // |y^2,x^2|
-                this.vCell.set(Math.pow(this.fieldY, 2), Math.pow(this.fieldX, 2));
+                //this.vCell.set(Math.pow(this.fieldY, 2), Math.pow(this.fieldX, 2));
 
                 // |cos(x^2+y),x+y^2+1|
-                //  this.vCell.set(Math.cos(Math.pow(this.fieldX, 2) + this.fieldY), this.fieldX - Math.pow(this.fieldY, 2) + 1);
+                this.vCell.set(Math.cos(Math.pow(this.fieldX, 2) + this.fieldY), this.fieldX - Math.pow(this.fieldY, 2) + 1);
 
-                /* ~ RULE ? */
-
-                //http://demonstrations.wolfram.com/PhasePortraitAndFieldDirectionsOfTwoDimensionalLinearSystems/
-                // this.vCell.set(a1 * this.fieldX + b1 * this.fieldY, a2 * this.fieldX + b2 * this.fieldY);
-
-
-                let mag = this.vCell.length();
-                mag = 1 / mag;
+                //let mag = this.vCell.length();
+                //mag = 1 / mag;
                 // this.vCell.normalize();
                 // this.vCell.multiplyScalar(mag);
 
@@ -196,15 +212,15 @@ class FlowField extends PIXI.Container {
     lookup(vLookup) {
 
         // reference vector -> position
-        let vMap = vLookup.clone();
+        this.vMap = vLookup.clone();
 
         // limit this vector
-        vMap.min(0, 0);
-        vMap.max(this.width, this.height);
+        //vMap.min(0, 0);
+        //vMap.max(this.width, this.height);
 
         // map range
-        this.mappedX = ~~mathUtils.convertToRange(vMap.x, [0, this.width], [0, this.range - 1]);
-        this.mappedY = ~~mathUtils.convertToRange(vMap.y, [0, this.height], [0, this.range - 1]);
+        this.mappedX = ~~mathUtils.convertToRange(this.vMap.x, [0, this.size.WIDTH], [0, this.range - 1]);
+        this.mappedY = ~~mathUtils.convertToRange(this.vMap.y, [0, this.size.HEIGHT], [0, this.range - 1]);
 
         // console.log(vLookup.x, canvas.width);
         // console.log(vLookup.y, canvas.height);
@@ -221,7 +237,7 @@ class FlowField extends PIXI.Container {
 
     drawField() {
 
-        //console.log('drawField');
+        console.log('drawField');
 
 
         this.graphics.clear();
@@ -263,10 +279,9 @@ class FlowField extends PIXI.Container {
 
                 this.graphics.lineStyle(1, 0xf3f3f3, 1);
 
-                this.magVector.normalize();
-                this.magVector.multiplyScalar(20);
+                //this.magVector.normalize();
+                //this.magVector.multiplyScalar(20);
                 this.graphics.lineTo(this.centerX + this.magVector.x, this.centerY + this.magVector.y);
-                // console.log(this.magVector)
 
 
             }

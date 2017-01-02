@@ -73,7 +73,13 @@ export const SETTINGS = {
     randomness: 0.25,
     opposite: 0.1,
     minAngle: 0.4,
-    minSide: 2
+    minSide: 2,
+    system: {
+        a1: 1,
+        b1:-3,
+        a2: 2,
+        b2: -2
+    }
 }
 
 
