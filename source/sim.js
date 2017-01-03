@@ -16,6 +16,7 @@ class Sim extends PIXI.Container {
         this.vMouse.pressed = false;
         this.vMouse.emit = true;
         this.interactive = true;
+        this.screen = document.getElementById('screen');
 
         this.initListener();
 
@@ -28,14 +29,14 @@ class Sim extends PIXI.Container {
         this.onPointerMove = this.onPointerMove.bind(this);
 
 
-        document.addEventListener('mousedown', this.onPointerDown, false);
-        document.addEventListener('touchstart', this.onPointerDown, false);
+        this.screen.addEventListener('mousedown', this.onPointerDown, false);
+        this.screen.addEventListener('touchstart', this.onPointerDown, false);
 
-        document.addEventListener('mouseup', this.onPointerUp, false);
-        document.addEventListener('touchend', this.onPointerUp, false);
+        this.screen.addEventListener('mouseup', this.onPointerUp, false);
+        this.screen.addEventListener('touchend', this.onPointerUp, false);
 
-        document.addEventListener('mousemove', this.onPointerMove, false);
-        document.addEventListener('touchmove', this.onPointerMove, false);
+        this.screen.addEventListener('mousemove', this.onPointerMove, false);
+        this.screen.addEventListener('touchmove', this.onPointerMove, false);
     }
 
     init() {

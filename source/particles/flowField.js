@@ -25,6 +25,10 @@ class FlowField extends PIXI.Container {
         this.vArray = [];
 
         this.range = 10;
+        this.RESOLUTION = {
+            X: 10,
+            Y: 5
+        };
         //private t:number = 0;
         //private deltaT:number = 0.0025;
         this.vCell = new Vector2();
@@ -44,12 +48,20 @@ class FlowField extends PIXI.Container {
         this.PERLIN_THETA = 0;
 
 
-        this.cellWidth = this.size.WIDTH / this.range;
-        this.cellHeight = this.size.HEIGHT / this.range;
+        // this.cellWidth = this.size.WIDTH / this.range;
+        // this.cellHeight = this.size.HEIGHT / this.range;
 
-        this.vArray = new Array(this.range);
+        this.cellWidth = this.size.WIDTH / this.RESOLUTION.X;
+        this.cellHeight = this.size.HEIGHT / this.RESOLUTION.Y;
+
+        // this.vArray = new Array(this.range);
+        // for (var i = 0; i < this.vArray.length; i++) {
+        //     this.vArray[i] = new Array(this.range);
+        // }
+
+        this.vArray = new Array(this.RESOLUTION.X);
         for (var i = 0; i < this.vArray.length; i++) {
-            this.vArray[i] = new Array(this.range);
+            this.vArray[i] = new Array(this.RESOLUTION.Y);
         }
 
 
@@ -60,12 +72,7 @@ class FlowField extends PIXI.Container {
         //this.init();
         this.update();
 
-        this.gui = new dat.GUI();
-        this.gui.add(SETTINGS.system, 'a1').min(-3).max(3).step(0.01).name('a1').onChange(this.update2DSystem.bind(this));
-        this.gui.add(SETTINGS.system, 'a2').min(-3).max(3).step(0.01).name('a2').onChange(this.update2DSystem.bind(this));
-        this.gui.add(SETTINGS.system, 'b1').min(-3).max(3).step(0.01).name('a1').onChange(this.update2DSystem.bind(this));
-        this.gui.add(SETTINGS.system, 'b2').min(-3).max(3).step(0.01).name('b2').onChange(this.update2DSystem.bind(this));
-        this.gui.add(this, 'drawField').name('drawField');
+
         //this.gui.close();
 
 
@@ -80,13 +87,25 @@ class FlowField extends PIXI.Container {
 
         //http://demonstrations.wolfram.com/PhasePortraitAndFieldDirectionsOfTwoDimensionalLinearSystems/
 
+        if (!this.gui) {
+            this.gui = new dat.GUI();
+            this.gui.add(SETTINGS.system, 'a1').min(-3).max(3).step(0.01).name('a1').onChange(this.update2DSystem.bind(this));
+            this.gui.add(SETTINGS.system, 'a2').min(-3).max(3).step(0.01).name('a2').onChange(this.update2DSystem.bind(this));
+            this.gui.add(SETTINGS.system, 'b1').min(-3).max(3).step(0.01).name('a1').onChange(this.update2DSystem.bind(this));
+            this.gui.add(SETTINGS.system, 'b2').min(-3).max(3).step(0.01).name('b2').onChange(this.update2DSystem.bind(this));
+            this.gui.add(this, 'drawField').name('drawField');
+        }
+
+
         for (var i = 0, len = this.vArray.length; i < len; i++) {
 
-            this.fieldX = mathUtils.convertToRange(i, [0, this.range - 1], [-this.range * .5, this.range * .5]);
+            // this.fieldX = mathUtils.convertToRange(i, [0, this.range - 1], [-this.range * .5, this.range * .5]);
+            this.fieldX = mathUtils.convertToRange(i, [0, this.RESOLUTION.X - 1], [-this.RESOLUTION.X * .5, this.RESOLUTION.X * .5]);
 
             for (var j = 0, len = this.vArray.length; j < len; j++) {
 
-                this.fieldY = mathUtils.convertToRange(j, [0, this.range - 1], [-this.range * .5, this.range * .5]);
+                // this.fieldY = mathUtils.convertToRange(j, [0, this.range - 1], [-this.range * .5, this.range * .5]);
+                this.fieldY = mathUtils.convertToRange(j, [0, this.RESOLUTION.Y - 1], [-this.RESOLUTION.Y * .5, this.RESOLUTION.Y * .5]);
 
                 this.vCell.set(SETTINGS.system.a1 * this.fieldX + SETTINGS.system.b1 * this.fieldY, SETTINGS.system.a2 * this.fieldX + SETTINGS.system.b2 * this.fieldY);
 
@@ -219,8 +238,11 @@ class FlowField extends PIXI.Container {
         //vMap.max(this.width, this.height);
 
         // map range
-        this.mappedX = ~~mathUtils.convertToRange(this.vMap.x, [0, this.size.WIDTH], [0, this.range - 1]);
-        this.mappedY = ~~mathUtils.convertToRange(this.vMap.y, [0, this.size.HEIGHT], [0, this.range - 1]);
+        // this.mappedX = ~~mathUtils.convertToRange(this.vMap.x, [0, this.size.WIDTH], [0, this.range - 1]);
+        // this.mappedY = ~~mathUtils.convertToRange(this.vMap.y, [0, this.size.HEIGHT], [0, this.range - 1]);
+
+        this.mappedX = ~~mathUtils.convertToRange(this.vMap.x, [0, this.size.WIDTH], [0, this.RESOLUTION.X - 1]);
+        this.mappedY = ~~mathUtils.convertToRange(this.vMap.y, [0, this.size.HEIGHT], [0, this.RESOLUTION.Y - 1]);
 
         // console.log(vLookup.x, canvas.width);
         // console.log(vLookup.y, canvas.height);
@@ -237,8 +259,7 @@ class FlowField extends PIXI.Container {
 
     drawField() {
 
-        console.log('drawField');
-
+        // console.log('drawField');
 
         this.graphics.clear();
 
