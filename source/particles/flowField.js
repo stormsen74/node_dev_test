@@ -7,13 +7,8 @@ var SimplexNoise = require('simplex-noise')
 var PIXI = require('pixi.js');
 
 import {Vector2} from './../math/vector2';
-import Agent from './../particles/agent';
 import mathUtils from './../utils/mathUtils';
-import Random from '../utils/random'
-
-import {SIM_DEFAULT} from './../config';
-import {INPUT_DATA} from './../config';
-import {SETTINGS} from './../config';
+import {FIELD_PARAMS} from './../config';
 
 class FlowField extends PIXI.Container {
 
@@ -21,21 +16,18 @@ class FlowField extends PIXI.Container {
         super()
 
         this.size = _size;
-        this.vArray = [];
-        this.vArray = [];
 
-        this.range = 10;
+        this.CONFIG = {};
+        this.CONFIG.INFO = 'config info';
+        this.CONFIG.RULE = FIELD_PARAMS.rules['|x^2-y^2,x+y|'];
+
         this.RESOLUTION = {
             X: 10,
             Y: 5
         };
-        //private t:number = 0;
-        //private deltaT:number = 0.0025;
         this.vCell = new Vector2();
         this.vMap = new Vector2();
         this.magVector = new Vector2();
-        //private fieldX:number;
-        //private fieldY:number;
         this.centerX = 0;
         this.centerY = 0;
         this.SIMPLEX;
@@ -47,36 +39,19 @@ class FlowField extends PIXI.Container {
         this.FIELD_SCALE = 10;
         this.PERLIN_THETA = 0;
 
-
-        // this.cellWidth = this.size.WIDTH / this.range;
-        // this.cellHeight = this.size.HEIGHT / this.range;
-
         this.cellWidth = this.size.WIDTH / this.RESOLUTION.X;
         this.cellHeight = this.size.HEIGHT / this.RESOLUTION.Y;
-
-        // this.vArray = new Array(this.range);
-        // for (var i = 0; i < this.vArray.length; i++) {
-        //     this.vArray[i] = new Array(this.range);
-        // }
 
         this.vArray = new Array(this.RESOLUTION.X);
         for (var i = 0; i < this.vArray.length; i++) {
             this.vArray[i] = new Array(this.RESOLUTION.Y);
         }
 
-
         this.graphics = new PIXI.Graphics();
         this.addChild(this.graphics);
 
-
-        //this.init();
-        this.update();
-
-
-        //this.gui.close();
-
-
     }
+
 
     update2DSystem() {
         this.init2DSystemField();
@@ -89,61 +64,64 @@ class FlowField extends PIXI.Container {
 
         if (!this.gui) {
             this.gui = new dat.GUI();
-            this.gui.add(SETTINGS.system, 'a1').min(-3).max(3).step(0.01).name('a1').onChange(this.update2DSystem.bind(this));
-            this.gui.add(SETTINGS.system, 'a2').min(-3).max(3).step(0.01).name('a2').onChange(this.update2DSystem.bind(this));
-            this.gui.add(SETTINGS.system, 'b1').min(-3).max(3).step(0.01).name('a1').onChange(this.update2DSystem.bind(this));
-            this.gui.add(SETTINGS.system, 'b2').min(-3).max(3).step(0.01).name('b2').onChange(this.update2DSystem.bind(this));
-            this.gui.add(this, 'drawField').name('drawField');
+            this.gui.add(FIELD_PARAMS.system2D, 'a1').min(-3).max(3).step(0.01).name('a1').onChange(this.update2DSystem.bind(this));
+            this.gui.add(FIELD_PARAMS.system2D, 'a2').min(-3).max(3).step(0.01).name('a2').onChange(this.update2DSystem.bind(this));
+            this.gui.add(FIELD_PARAMS.system2D, 'b1').min(-3).max(3).step(0.01).name('a1').onChange(this.update2DSystem.bind(this));
+            this.gui.add(FIELD_PARAMS.system2D, 'b2').min(-3).max(3).step(0.01).name('b2').onChange(this.update2DSystem.bind(this));
+            // this.gui.add(this, 'drawField').name('drawField');
+            // this.gui.close();
         }
 
 
         for (var i = 0, len = this.vArray.length; i < len; i++) {
-
-            // this.fieldX = mathUtils.convertToRange(i, [0, this.range - 1], [-this.range * .5, this.range * .5]);
-            this.fieldX = mathUtils.convertToRange(i, [0, this.RESOLUTION.X - 1], [-this.RESOLUTION.X * .5, this.RESOLUTION.X * .5]);
-
+            this.FIELD_X = mathUtils.convertToRange(i, [0, this.RESOLUTION.X - 1], [-this.RESOLUTION.X * .5, this.RESOLUTION.X * .5]);
             for (var j = 0, len = this.vArray.length; j < len; j++) {
+                this.FIELD_Y = mathUtils.convertToRange(j, [0, this.RESOLUTION.Y - 1], [-this.RESOLUTION.Y * .5, this.RESOLUTION.Y * .5]);
 
-                // this.fieldY = mathUtils.convertToRange(j, [0, this.range - 1], [-this.range * .5, this.range * .5]);
-                this.fieldY = mathUtils.convertToRange(j, [0, this.RESOLUTION.Y - 1], [-this.RESOLUTION.Y * .5, this.RESOLUTION.Y * .5]);
-
-                this.vCell.set(SETTINGS.system.a1 * this.fieldX + SETTINGS.system.b1 * this.fieldY, SETTINGS.system.a2 * this.fieldX + SETTINGS.system.b2 * this.fieldY);
-
+                this.vCell.set(FIELD_PARAMS.system2D.a1 * this.FIELD_X + FIELD_PARAMS.system2D.b1 * this.FIELD_Y, FIELD_PARAMS.system2D.a2 * this.FIELD_X + FIELD_PARAMS.system2D.b2 * this.FIELD_Y);
                 this.vArray[i][j] = this.vCell.clone();
-
             }
         }
 
-        this.drawField();
     }
 
 
     initField() {
 
+        console.log('initField', this.CONFIG.RULE)
+
+        if (!this.gui) {
+            this.gui = new dat.GUI();
+            this.gui.add(this.CONFIG, 'INFO');
+            this.gui.add(this.CONFIG, 'RULE').options(FIELD_PARAMS.rules).onChange(this.initField.bind(this));
+
+        }
+
         for (var i = 0; i < this.vArray.length; i++) {
-
-            this.fieldX = mathUtils.convertToRange(i, [0, this.range - 1], [-this.range * .5, this.range * .5]);
-
+            this.FIELD_X = mathUtils.convertToRange(i, [0, this.RESOLUTION.X - 1], [-this.RESOLUTION.X * .5, this.RESOLUTION.X * .5]);
             for (var j = 0; j < this.vArray[1].length; j++) {
-
-                this.fieldY = mathUtils.convertToRange(j, [0, this.range - 1], [-this.range * .5, this.range * .5]);
+                this.FIELD_Y = mathUtils.convertToRange(j, [0, this.RESOLUTION.Y - 1], [-this.RESOLUTION.Y * .5, this.RESOLUTION.Y * .5]);
 
                 /* ~ RULE ? */
 
-                // |x^2-y^2,x+y|
-                //vCell.set(Math.pow(fieldX, 2) - Math.pow(fieldY, 2), fieldX + fieldY);
+                switch (this.CONFIG.RULE) {
+                    case '|x^2-y^2,x+y|':
+                        this.vCell.set(Math.pow(this.FIELD_X, 2) - Math.pow(this.FIELD_Y, 2), this.FIELD_X + this.FIELD_Y);
+                        break;
+                    case '|x^2,y^2|':
+                        this.vCell.set(Math.pow(this.FIELD_X, 2), Math.pow(this.FIELD_Y, 2));
+                        break;
+                    case '|y^2,x^2|':
+                        this.vCell.set(Math.pow(this.FIELD_Y, 2), Math.pow(this.FIELD_X, 2));
+                        break;
+                    case '|cos(x^2+y),x+y^2+1|':
+                        this.vCell.set(Math.cos(Math.pow(this.FIELD_X, 2) + this.FIELD_Y), this.FIELD_X - Math.pow(this.FIELD_Y, 2) + 1);
+                        break;
+                }
 
-                // |x^2,y^2|
-                // this.vCell.set(Math.pow(this.fieldX, 2), Math.pow(this.fieldY, 2));
 
-                // |y^2,x^2|
-                //this.vCell.set(Math.pow(this.fieldY, 2), Math.pow(this.fieldX, 2));
-
-                // |cos(x^2+y),x+y^2+1|
-                this.vCell.set(Math.cos(Math.pow(this.fieldX, 2) + this.fieldY), this.fieldX - Math.pow(this.fieldY, 2) + 1);
-
-                //let mag = this.vCell.length();
-                //mag = 1 / mag;
+                // let mag = this.vCell.length();
+                // mag = 1 / mag;
                 // this.vCell.normalize();
                 // this.vCell.multiplyScalar(mag);
 
@@ -164,14 +142,14 @@ class FlowField extends PIXI.Container {
 
         for (var i = 0; i < this.vArray.length; i++) {
 
-            this.fieldX = mathUtils.convertToRange(i, [0, this.range - 1], [-this.range * .5, this.range * .5]);
+            this.FIELD_X = mathUtils.convertToRange(i, [0, this.RESOLUTION.X - 1], [-this.RESOLUTION.X * .5, this.RESOLUTION.X * .5]);
 
             for (var j = 0; j < this.vArray[1].length; j++) {
 
-                this.fieldY = mathUtils.convertToRange(j, [0, this.range - 1], [-this.range * .5, this.range * .5]);
+                this.FIELD_Y = mathUtils.convertToRange(j, [0, this.RESOLUTION.Y - 1], [-this.RESOLUTION.Y * .5, this.RESOLUTION.Y * .5]);
 
                 /* ~ perlin-noise ~*/
-                this.PERLIN_THETA = mathUtils.convertToRange(this.SIMPLEX.noise2D(this.fieldX / this.FIELD_SCALE, this.fieldY / this.FIELD_SCALE), [-1, 1], [0, Math.PI * 2]);
+                this.PERLIN_THETA = mathUtils.convertToRange(this.SIMPLEX.noise2D(this.FIELD_X / this.FIELD_SCALE, this.FIELD_Y / this.FIELD_SCALE), [-1, 1], [0, Math.PI * 2]);
 
                 this.vCell.set(Math.cos(this.PERLIN_THETA), Math.sin(this.PERLIN_THETA));
 
@@ -180,7 +158,7 @@ class FlowField extends PIXI.Container {
 
 
                 this.vCell.normalize();
-                let mag = Math.abs(this.SIMPLEX.noise2D(this.fieldX / this.FIELD_SCALE, this.fieldY / this.FIELD_SCALE)) * 15;
+                let mag = Math.abs(this.SIMPLEX.noise2D(this.FIELD_X / this.FIELD_SCALE, this.FIELD_Y / this.FIELD_SCALE)) * 15;
                 this.vCell.multiplyScalar(mag);
 
                 this.vArray[i][j] = this.vCell.clone();
@@ -198,14 +176,14 @@ class FlowField extends PIXI.Container {
 
         for (var i = 0, len = this.vArray.length; i < len; i++) {
 
-            this.fieldX = mathUtils.convertToRange(i, [0, this.range - 1], [-this.range * .5, this.range * .5]);
+            this.FIELD_X = mathUtils.convertToRange(i, [0, this.RESOLUTION.X - 1], [-this.RESOLUTION.X * .5, this.RESOLUTION.X * .5]);
 
             for (var j = 0, len2 = this.vArray[1].length; j < len2; j++) {
 
-                this.fieldY = mathUtils.convertToRange(j, [0, this.range - 1], [-this.range * .5, this.range * .5]);
+                this.FIELD_Y = mathUtils.convertToRange(j, [0, this.RESOLUTION.Y - 1], [-this.RESOLUTION.Y * .5, this.RESOLUTION.Y * .5]);
 
                 /* ~ perlin-noise ~*/
-                this.PERLIN_THETA = mathUtils.convertToRange(this.SIMPLEX.noise3D(this.fieldX / this.FIELD_SCALE, this.fieldY / this.FIELD_SCALE, this.t), [-1, 1], [0, Math.PI * 2]);
+                this.PERLIN_THETA = mathUtils.convertToRange(this.SIMPLEX.noise3D(this.FIELD_X / this.FIELD_SCALE, this.FIELD_Y / this.FIELD_SCALE, this.t), [-1, 1], [0, Math.PI * 2]);
 
                 this.vCell.set(Math.cos(this.PERLIN_THETA), Math.sin(this.PERLIN_THETA));
 
@@ -214,16 +192,13 @@ class FlowField extends PIXI.Container {
 
 
                 this.vCell.normalize();
-                var mag = Math.abs(this.SIMPLEX.noise2D(this.fieldX / this.FIELD_SCALE, this.fieldY / this.FIELD_SCALE)) * 15;
-                //var mag = Math.abs(noise.perlin3(this.fieldX / this.FIELD_SCALE, this.fieldY / this.FIELD_SCALE, this.t)) * 15;
+                var mag = Math.abs(this.SIMPLEX.noise2D(this.FIELD_X / this.FIELD_SCALE, this.FIELD_Y / this.FIELD_SCALE)) * 15;
                 this.vCell.multiplyScalar(mag);
 
                 this.vArray[i][j] = this.vCell.clone();
 
             }
         }
-
-        //this.drawField();
 
     }
 
@@ -238,9 +213,6 @@ class FlowField extends PIXI.Container {
         //vMap.max(this.width, this.height);
 
         // map range
-        // this.mappedX = ~~mathUtils.convertToRange(this.vMap.x, [0, this.size.WIDTH], [0, this.range - 1]);
-        // this.mappedY = ~~mathUtils.convertToRange(this.vMap.y, [0, this.size.HEIGHT], [0, this.range - 1]);
-
         this.mappedX = ~~mathUtils.convertToRange(this.vMap.x, [0, this.size.WIDTH], [0, this.RESOLUTION.X - 1]);
         this.mappedY = ~~mathUtils.convertToRange(this.vMap.y, [0, this.size.HEIGHT], [0, this.RESOLUTION.Y - 1]);
 
@@ -253,7 +225,6 @@ class FlowField extends PIXI.Container {
 
     update() {
 
-
     }
 
 
@@ -263,6 +234,18 @@ class FlowField extends PIXI.Container {
 
         this.graphics.clear();
 
+        this.graphics.lineStyle(.5, 0x00ff00, .5);
+        // drawField cols
+        for (var i = 1; i < this.RESOLUTION.X; i++) {
+            this.graphics.moveTo(i * this.cellWidth, 0);
+            this.graphics.lineTo(i * this.cellWidth, this.size.HEIGHT);
+        }
+        // drawField rows
+        for (var i = 1; i < this.RESOLUTION.Y; i++) {
+            this.graphics.moveTo(0, i * this.cellHeight);
+            this.graphics.lineTo(this.size.WIDTH, i * this.cellHeight);
+        }
+
         for (var i = 0; i < this.vArray.length; i++) {
 
             for (var j = 0; j < this.vArray[1].length; j++) {
@@ -270,29 +253,14 @@ class FlowField extends PIXI.Container {
                 this.graphics.lineStyle(1, 0x006699, .1);
                 this.graphics.beginFill(0xcc33ff);
 
-                // drawField cols
-                //this.graphics.moveTo(i * this.cellWidth, 0);
-                //this.graphics.lineTo(i * this.cellWidth, this.height);
-
-
-                // drawField rows
-                //this.graphics.moveTo(0, j * this.cellHeight);
-                //this.graphics.lineTo(this.size.WIDTH + this.cellWidth * .5, j * this.cellHeight);
+                //drawField center point
                 this.centerX = i * this.cellWidth + this.cellWidth * .5;
                 this.centerY = j * this.cellHeight + this.cellHeight * .5;
                 this.graphics.drawCircle(this.centerX, this.centerY, 2, 0, 2 * 3.14, false);
                 this.graphics.endFill();
 
-                //drawField center point
-                //this.graphics.lineStyle(0, 0x000000, 0);
-                //this.graphics.beginFill(0xcc0000);
-
-                //this.t_center.x = i * this.cellWidth + this.cellWidth * .5;
-                //this.t_center.y = j * this.cellHeight + this.cellHeight * .5;
-
                 // drawField mag vector
                 this.graphics.moveTo(this.centerX, this.centerY);
-
                 this.magVector = this.vArray[i][j].clone();
                 //value = mathUtils.convertToRange(this.magVector.length(), [0, 18], [0, 1]);
                 //this.color.setHSV(.5 + value * .5, .5, 0.0);
@@ -303,7 +271,6 @@ class FlowField extends PIXI.Container {
                 //this.magVector.normalize();
                 //this.magVector.multiplyScalar(20);
                 this.graphics.lineTo(this.centerX + this.magVector.x, this.centerY + this.magVector.y);
-
 
             }
         }

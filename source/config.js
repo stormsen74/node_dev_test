@@ -66,20 +66,24 @@ export const COLORS = {
         0xcce1e6,
         0xe9e0c9
     ]
-}
+};
 
-export const SETTINGS = {
-    iterations: 50,
-    randomness: 0.25,
-    opposite: 0.1,
-    minAngle: 0.4,
-    minSide: 2,
-    system: {
+export const FIELD_PARAMS = {
+    system2D: {
         a1: 1,
-        b1:-3,
+        b1: -3,
         a2: 2,
         b2: -2
+    },
+    rules: {
+        '|x^2-y^2,x+y|': '|x^2-y^2,x+y|',
+        '|x^2,y^2|': '|x^2,y^2|',
+        '|y^2,x^2|': '|y^2,x^2|',
+        '|cos(x^2+y),x+y^2+1|': '|cos(x^2+y),x+y^2+1|'
     }
-}
+};
+
+
+
 
 

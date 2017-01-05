@@ -16,7 +16,7 @@ import Random from './utils/random'
 
 import {SIM_DEFAULT} from './config';
 import {INPUT_DATA} from './config';
-import {SETTINGS} from './config';
+import {FIELD_PARAMS} from './config';
 
 class Sim_05 extends Sim {
 
@@ -30,11 +30,11 @@ class Sim_05 extends Sim {
         this.update();
 
         this.gui = new dat.GUI();
-        this.gui.add(SETTINGS, 'minSide').min(0).max(100).name('Min Side Length');
-        this.gui.add(SETTINGS, 'minAngle').min(0.0).max(1.2).step(0.01).name('Min Angle (rad)');
-        this.gui.add(SETTINGS, 'iterations').min(1).max(100).name('Iterations');
-        this.gui.add(SETTINGS, 'randomness').min(0.0).max(1.0).step(0.01).name('Randomness');
-        this.gui.add(SETTINGS, 'opposite').min(0.0).max(1.0).step(0.01).name('Opposite Sides');
+        this.gui.add(FIELD_PARAMS, 'minSide').min(0).max(100).name('Min Side Length');
+        this.gui.add(FIELD_PARAMS, 'minAngle').min(0.0).max(1.2).step(0.01).name('Min Angle (rad)');
+        this.gui.add(FIELD_PARAMS, 'iterations').min(1).max(100).name('Iterations');
+        this.gui.add(FIELD_PARAMS, 'randomness').min(0.0).max(1.0).step(0.01).name('Randomness');
+        this.gui.add(FIELD_PARAMS, 'opposite').min(0.0).max(1.0).step(0.01).name('Opposite Sides');
         this.gui.add(this, 'test').name('Start / Stop');
         this.gui.close();
 
@@ -43,7 +43,7 @@ class Sim_05 extends Sim {
 
 
     test() {
-        console.log('call', 5, SETTINGS.minSide);
+        console.log('call', 5, FIELD_PARAMS.minSide);
 
 
     }
