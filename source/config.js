@@ -69,6 +69,10 @@ export const COLORS = {
 };
 
 export const FIELD_PARAMS = {
+    perlin: {
+        FIELD_SCALE: 10,
+        deltaT: 0.0025
+    },
     system2D: {
         a1: 1,
         b1: -3,

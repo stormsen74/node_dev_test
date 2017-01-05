@@ -27,7 +27,7 @@ class ParticleSystem extends PIXI.Container {
 
 
         this.gfx = new PIXI.Graphics();
-        // this.gfx.blendMode = PIXI.BLEND_MODES.ADD;
+        //this.gfx.blendMode = PIXI.BLEND_MODES.ADD;
         this.addChild(this.gfx);
 
         //this.init();
@@ -124,13 +124,13 @@ class ParticleSystem extends PIXI.Container {
             }
 
             // case wrap bounds!  TODO
-            // if (agent.position.x < this.bounds.x1 || agent.position.x > this.bounds.x2) {
-            //     agent.tail = []
-            // }
-            //
-            // if (agent.position.y < this.bounds.y1 || agent.position.y > this.bounds.y2) {
-            //     agent.tail = []
-            // }
+            if (agent.position.x < this.bounds.x1 || agent.position.x > this.bounds.x2) {
+                agent.tail = []
+            }
+
+            if (agent.position.y < this.bounds.y1 || agent.position.y > this.bounds.y2) {
+                agent.tail = []
+            }
             // case wrap bounds!  TODO
 
             this.gfx.lineStyle(1, agent.color);
