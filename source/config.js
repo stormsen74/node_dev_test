@@ -69,8 +69,14 @@ export const COLORS = {
 };
 
 export const FIELD_PARAMS = {
+    type: {
+        vectorField: 'vectorField',
+        linearSystemField: 'linearSystemField',
+        perlinField: 'perlinField'
+    },
     perlin: {
         FIELD_SCALE: 10,
+        FIELD_STRENGTH: 15,
         deltaT: 0.0025
     },
     system2D: {
@@ -83,7 +89,11 @@ export const FIELD_PARAMS = {
         '|x^2-y^2,x+y|': '|x^2-y^2,x+y|',
         '|x^2,y^2|': '|x^2,y^2|',
         '|y^2,x^2|': '|y^2,x^2|',
-        '|cos(x^2+y),x+y^2+1|': '|cos(x^2+y),x+y^2+1|'
+        '|cos(x^2+y),x+y^2+1|': '|cos(x^2+y),x+y^2+1|',
+        '|sin(y),sin(x)|': '|sin(y),sin(x)|',
+        '|x,y|': '|x,y|',
+        '|y,x|': '|y,x|',
+        '|y,-x|': '|y,-x|'
     }
 };
 

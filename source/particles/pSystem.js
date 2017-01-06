@@ -148,7 +148,7 @@ class ParticleSystem extends PIXI.Container {
 
         this.particles.forEach(agent => {
 
-            agent.wrap(this.bounds);
+            agent.bounce(this.bounds);
 
             agent.update();
 

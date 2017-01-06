@@ -12,17 +12,20 @@ import {FIELD_PARAMS} from './../config';
 
 class FlowField extends PIXI.Container {
 
-    constructor(_size) {
+    constructor(_size, _type) {
         super()
 
         this.size = _size;
+        this.type = _type;
+
+        console.log(this.type)
 
 
         this.updateDraw = true;
 
         this.RESOLUTION = {
-            X: 12,
-            Y: 6
+            X: 10,
+            Y: 5
         };
 
         this.vCell = new Vector2();
@@ -41,7 +44,7 @@ class FlowField extends PIXI.Container {
 
         this.CONFIG = {};
         this.CONFIG.INFO = 'flow field';
-        this.CONFIG.RULE = FIELD_PARAMS.rules['|x^2-y^2,x+y|'];
+        this.CONFIG.RULE = FIELD_PARAMS.rules['|y,-x|'];
 
         this.cellWidth = this.size.WIDTH / this.RESOLUTION.X;
         this.cellHeight = this.size.HEIGHT / this.RESOLUTION.Y;
@@ -54,28 +57,54 @@ class FlowField extends PIXI.Container {
         this.graphics = new PIXI.Graphics();
         this.addChild(this.graphics);
 
-    }
 
+        switch (this.type) {
+            case 'vectorField':
+                // https://en.wikipedia.org/wiki/Vector_field
+                if (!this.gui) {
+                    this.gui = new dat.GUI();
+                    this.CONFIG.INFO = 'vectorField';
+                    this.gui.add(this.CONFIG, 'INFO');
+                    this.gui.add(this.CONFIG, 'RULE').options(FIELD_PARAMS.rules).onChange(this.initVectorField.bind(this));
+                }
+                this.initVectorField();
+                break;
+            case 'linearSystemField':
+                // http://demonstrations.wolfram.com/PhasePortraitAndFieldDirectionsOfTwoDimensionalLinearSystems/
+                if (!this.gui) {
+                    this.gui = new dat.GUI();
+                    this.CONFIG.INFO = 'linearSystemField';
+                    this.gui.add(this.CONFIG, 'INFO');
+                    this.gui.add(FIELD_PARAMS.system2D, 'a1').min(-3).max(3).step(0.01).name('a1').onChange(this.plotLinearSystemField.bind(this));
+                    this.gui.add(FIELD_PARAMS.system2D, 'a2').min(-3).max(3).step(0.01).name('a2').onChange(this.plotLinearSystemField.bind(this));
+                    this.gui.add(FIELD_PARAMS.system2D, 'b1').min(-3).max(3).step(0.01).name('a1').onChange(this.plotLinearSystemField.bind(this));
+                    this.gui.add(FIELD_PARAMS.system2D, 'b2').min(-3).max(3).step(0.01).name('b2').onChange(this.plotLinearSystemField.bind(this));
+                }
+                this.plotLinearSystemField();
+                break;
+            case 'perlinField':
+                if (!this.gui) {
+                    this.gui = new dat.GUI();
+                    this.CONFIG.INFO = 'perlinField';
+                    this.gui.add(this.CONFIG, 'INFO');
+                    this.gui.add(FIELD_PARAMS.perlin, 'FIELD_SCALE').min(1).max(10).step(0.01).name('FIELD_SCALE').onChange(this.stepPerlinField.bind(this));
+                    this.gui.add(FIELD_PARAMS.perlin, 'FIELD_STRENGTH').min(1).max(30).step(0.01).name('FIELD_STRENGTH').onChange(this.stepPerlinField.bind(this));
+                    this.gui.add(FIELD_PARAMS.perlin, 'deltaT').min(0.001).max(0.01).step(0.0001).name('deltaT').onChange(this.stepPerlinField.bind(this));
 
-    update2DSystem() {
-        this.plot2DSystemField();
-    }
-
-
-    plot2DSystemField() {
-
-        //http://demonstrations.wolfram.com/PhasePortraitAndFieldDirectionsOfTwoDimensionalLinearSystems/
-
-        if (!this.gui) {
-            this.gui = new dat.GUI();
-            this.gui.add(FIELD_PARAMS.system2D, 'a1').min(-3).max(3).step(0.01).name('a1').onChange(this.plot2DSystemField.bind(this));
-            this.gui.add(FIELD_PARAMS.system2D, 'a2').min(-3).max(3).step(0.01).name('a2').onChange(this.plot2DSystemField.bind(this));
-            this.gui.add(FIELD_PARAMS.system2D, 'b1').min(-3).max(3).step(0.01).name('a1').onChange(this.plot2DSystemField.bind(this));
-            this.gui.add(FIELD_PARAMS.system2D, 'b2').min(-3).max(3).step(0.01).name('b2').onChange(this.plot2DSystemField.bind(this));
-            // this.gui.add(this, 'drawField').name('drawField');
-            // this.gui.close();
+                }
+                this.initPerlinField();
+                break;
         }
 
+        // this.gui.add(this, 'drawField').name('drawField');
+        // this.gui.close();
+
+        if (this.updateDraw) this.drawField();
+
+    }
+
+
+    plotLinearSystemField() {
 
         for (var i = 0, len = this.vArray.length; i < len; i++) {
             this.FIELD_X = mathUtils.convertToRange(i, [0, this.RESOLUTION.X - 1], [-this.RESOLUTION.X * .5, this.RESOLUTION.X * .5]);
@@ -87,20 +116,10 @@ class FlowField extends PIXI.Container {
             }
         }
 
-        if (this.updateDraw) this.drawField();
-
     }
 
 
-    initField() {
-
-        console.log('initField', this.CONFIG.RULE)
-
-        if (!this.gui) {
-            this.gui = new dat.GUI();
-            this.gui.add(this.CONFIG, 'INFO');
-            this.gui.add(this.CONFIG, 'RULE').options(FIELD_PARAMS.rules).onChange(this.initField.bind(this));
-        }
+    initVectorField() {
 
         for (var i = 0; i < this.vArray.length; i++) {
             this.FIELD_X = mathUtils.convertToRange(i, [0, this.RESOLUTION.X - 1], [-this.RESOLUTION.X * .5, this.RESOLUTION.X * .5]);
@@ -122,33 +141,32 @@ class FlowField extends PIXI.Container {
                     case '|cos(x^2+y),x+y^2+1|':
                         this.vCell.set(Math.cos(Math.pow(this.FIELD_X, 2) + this.FIELD_Y), this.FIELD_X - Math.pow(this.FIELD_Y, 2) + 1);
                         break;
+                    case '|sin(y),sin(x)|':
+                        this.vCell.set(Math.sin(this.FIELD_X), Math.sin(this.FIELD_Y)).multiplyScalar(10);
+                        break;
+                    case '|x,y|':
+                        this.vCell.set(this.FIELD_X, this.FIELD_Y).multiplyScalar(3);
+                        break;
+                    case '|y,x|':
+                        this.vCell.set(this.FIELD_Y, this.FIELD_X).multiplyScalar(3);
+                        break;
+                    case '|y,-x|':
+                        this.vCell.set(this.FIELD_Y, -this.FIELD_X).multiplyScalar(3);
+                        break;
                 }
-
 
                 // let mag = this.vCell.length();
                 // mag = 1 / mag;
                 // this.vCell.normalize();
-                // this.vCell.multiplyScalar(mag);
+                // this.vCell.multiplyScalar(10);
 
                 this.vArray[i][j] = this.vCell.clone();
-
-                //console.log(i, j, this.vArray[i][j]);
             }
         }
-
-        if (this.updateDraw) this.drawField();
 
     }
 
     initPerlinField() {
-
-        if (!this.gui) {
-            this.gui = new dat.GUI();
-            this.gui.add(this.CONFIG, 'INFO');
-            this.gui.add(FIELD_PARAMS.perlin, 'FIELD_SCALE').min(1).max(10).step(0.01).name('FIELD_SCALE').onChange(this.stepPerlinField.bind(this));
-            this.gui.add(FIELD_PARAMS.perlin, 'deltaT').min(0.001).max(0.01).step(0.0001).name('deltaT').onChange(this.stepPerlinField.bind(this));
-
-        }
 
         this.SIMPLEX = new SimplexNoise();
         //noise.seed(this.FIELD_SEED);
@@ -161,7 +179,7 @@ class FlowField extends PIXI.Container {
 
                 this.FIELD_Y = mathUtils.convertToRange(j, [0, this.RESOLUTION.Y - 1], [-this.RESOLUTION.Y * .5, this.RESOLUTION.Y * .5]);
 
-                /* ~ perlin-noise ~*/
+                /* ~ perlin-noise ~ */
                 this.PERLIN_THETA = mathUtils.convertToRange(this.SIMPLEX.noise2D(this.FIELD_X / FIELD_PARAMS.perlin.FIELD_SCALE, this.FIELD_Y / FIELD_PARAMS.perlin.FIELD_SCALE), [-1, 1], [0, Math.PI * 2]);
 
                 this.vCell.set(Math.cos(this.PERLIN_THETA), Math.sin(this.PERLIN_THETA));
@@ -171,16 +189,12 @@ class FlowField extends PIXI.Container {
 
 
                 this.vCell.normalize();
-                let mag = Math.abs(this.SIMPLEX.noise2D(this.FIELD_X / FIELD_PARAMS.perlin.FIELD_SCALE, this.FIELD_Y / FIELD_PARAMS.perlin.FIELD_SCALE)) * 15;
+                let mag = Math.abs(this.SIMPLEX.noise2D(this.FIELD_X / FIELD_PARAMS.perlin.FIELD_SCALE, this.FIELD_Y / FIELD_PARAMS.perlin.FIELD_SCALE)) * FIELD_PARAMS.perlin.FIELD_STRENGTH;
                 this.vCell.multiplyScalar(mag);
 
                 this.vArray[i][j] = this.vCell.clone();
-                // console.log(i, j, this.vArray[i][j]);
-
             }
         }
-
-        if (this.updateDraw) this.drawField();
 
     }
 
@@ -207,15 +221,12 @@ class FlowField extends PIXI.Container {
 
 
                 this.vCell.normalize();
-                var mag = Math.abs(this.SIMPLEX.noise2D(this.FIELD_X / FIELD_PARAMS.perlin.FIELD_SCALE, this.FIELD_Y / FIELD_PARAMS.perlin.FIELD_SCALE)) * 15;
+                var mag = Math.abs(this.SIMPLEX.noise2D(this.FIELD_X / FIELD_PARAMS.perlin.FIELD_SCALE, this.FIELD_Y / FIELD_PARAMS.perlin.FIELD_SCALE)) * FIELD_PARAMS.perlin.FIELD_STRENGTH;
                 this.vCell.multiplyScalar(mag);
 
                 this.vArray[i][j] = this.vCell.clone();
-
             }
         }
-
-        if (this.updateDraw) this.drawField();
 
     }
 
@@ -241,6 +252,13 @@ class FlowField extends PIXI.Container {
 
 
     update() {
+        if (this.type == 'perlinField') {
+            this.stepPerlinField();
+        } else if (this.type == 'linearSystemField') {
+            this.plotLinearSystemField();
+        }
+
+        if (this.updateDraw) this.drawField();
 
     }
 
