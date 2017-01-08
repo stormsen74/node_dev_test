@@ -44,14 +44,14 @@ class Sim_04 extends Sim {
 
         this.pSystem = new ParticleSystem(_size, origin);
 
-        this.flowField = new FlowField(_size, FIELD_PARAMS.type.linearSystemField);
+        this.flowField = new FlowField(_size, FIELD_PARAMS.type.vectorField);
 
 
         this.addChild(this.pSystem)
         this.addChild(this.flowField)
         //this.addChild(this.attractor)
         //this.addChild(this.attractor2)
-        this.addChild(this.repeller)
+        //this.addChild(this.repeller)
 
         //this.init();
         this.update();
@@ -108,10 +108,10 @@ class Sim_04 extends Sim {
 
     update() {
 
-        //this.pSystem.wander(-.1, .1);
-        // this.pSystem.applyFriction(0.05);
+        this.pSystem.wander(-.1, .1);
+         //this.pSystem.applyFriction(0.05);
         //this.pSystem.applyAttractor(this.attractor);
-        this.pSystem.applyRepeller(this.repeller);
+        //this.pSystem.applyRepeller(this.repeller);
         this.pSystem.applyField(this.flowField);
         // this.pSystem.flee(this.vMouse);
         // this.pSystem.seek(this.vMouse);
@@ -119,7 +119,7 @@ class Sim_04 extends Sim {
         // this.pSystem.applyForce(this.GRAVITY);
 
         this.pSystem.update();
-        //this.pSystem.drawTail();
+        this.pSystem.drawTail();
 
         this.flowField.update();
 

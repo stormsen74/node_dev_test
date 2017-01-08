@@ -32,7 +32,7 @@ class Demo {
         }
 
 
-        this.sim = new Sim_04(DEFAULT_SIZE)
+        this.sim = new Sim_05(DEFAULT_SIZE)
 
         this.init_PIXI_Renderer();
         this.initSim();
@@ -74,7 +74,7 @@ class Demo {
             antialias: true,
             autoResize: false,
             autoClear: false,
-            roundPixels: true //performance
+            roundPixels: false //performance
         }
 
         this.renderer = new PIXI.autoDetectRenderer(this.size.w, this.size.h, rendererOptions);
@@ -91,7 +91,7 @@ class Demo {
         //this.stage.addChild(this.outputSprite);
         //
         //this.bg = new PIXI.Graphics();
-        //this.bg.beginFill(rendererOptions.backgroundColor, 0.01);
+        //this.bg.beginFill(rendererOptions.backgroundColor, 0.1);
         //this.bg.drawRect(0, 0, this.size.w, this.size.h);
         //this.bg.endFill();
         //this.bg.cacheAsBitmap = true;

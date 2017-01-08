@@ -61,8 +61,8 @@ class Agent extends PIXI.Container {
         this.vDebug.lineTo(1.5 * r, 0);
 
 
-        this.addChild(this.body);
-        this.addChild(this.vDebug);
+        //this.addChild(this.body);
+        //this.addChild(this.vDebug);
         //this.body.blendMode = PIXI.BLEND_MODES.ADD;
 
         //console.log(DEFAULT_AGENT)

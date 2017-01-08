@@ -9,7 +9,7 @@ import {Vector2} from './math/vector2';
 import Agent from './particles/agent';
 import ParticleSystem from './particles/pSystem';
 import Repeller from './particles/repeller';
-import Attractor from './particles/attractor';
+import FlowField from './particles/flowField';
 import mathUtils from './utils/mathUtils';
 import Sim from './sim';
 import Random from './utils/random'
@@ -25,27 +25,27 @@ class Sim_05 extends Sim {
 
 
 
+        this.flowField = new FlowField(_size, FIELD_PARAMS.type.linearSystemField);
+        this.flowField.updateDraw = true;
+        this.addChild(this.flowField);
 
         //this.init();
         this.update();
 
-        this.gui = new dat.GUI();
-        this.gui.add(FIELD_PARAMS, 'minSide').min(0).max(100).name('Min Side Length');
-        this.gui.add(FIELD_PARAMS, 'minAngle').min(0.0).max(1.2).step(0.01).name('Min Angle (rad)');
-        this.gui.add(FIELD_PARAMS, 'iterations').min(1).max(100).name('Iterations');
-        this.gui.add(FIELD_PARAMS, 'randomness').min(0.0).max(1.0).step(0.01).name('Randomness');
-        this.gui.add(FIELD_PARAMS, 'opposite').min(0.0).max(1.0).step(0.01).name('Opposite Sides');
-        this.gui.add(this, 'test').name('Start / Stop');
-        this.gui.close();
-
+        //this.gui = new dat.GUI();
+        //this.gui.add(FIELD_PARAMS, 'minSide').min(0).max(100).name('Min Side Length');
+        //this.gui.add(FIELD_PARAMS, 'minAngle').min(0.0).max(1.2).step(0.01).name('Min Angle (rad)');
+        //this.gui.add(FIELD_PARAMS, 'iterations').min(1).max(100).name('Iterations');
+        //this.gui.add(FIELD_PARAMS, 'randomness').min(0.0).max(1.0).step(0.01).name('Randomness');
+        //this.gui.add(FIELD_PARAMS, 'opposite').min(0.0).max(1.0).step(0.01).name('Opposite Sides');
+        //this.gui.add(this, 'test').name('Start / Stop');
+        //this.gui.close();
 
     }
 
 
     test() {
-        console.log('call', 5, FIELD_PARAMS.minSide);
-
-
+        //console.log('call', 5, FIELD_PARAMS.minSide);
     }
 
 
@@ -88,6 +88,7 @@ class Sim_05 extends Sim {
     update() {
 
 
+        this.flowField.update();
 
         // inherit
         if (this.vMouse.pressed) {

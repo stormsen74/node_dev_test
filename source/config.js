@@ -11,7 +11,15 @@ import {Vector2} from './math/vector2';
 export const DEFAULT_AGENT = {
     SEEK_MAX_SPEED: 10,
     SEEK_MAX_FORCE: .15,
-    TAIL_LENGTH: 40
+    TAIL_LENGTH: 10,
+
+}
+
+export const PSYSTEM = {
+    BOUND_TYPE: {
+        bounce: 'bounce',
+        wrap: 'wrap'
+    }
 }
 
 export const DEFAULT_SIZE = {

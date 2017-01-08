@@ -24,8 +24,8 @@ class FlowField extends PIXI.Container {
         this.updateDraw = true;
 
         this.RESOLUTION = {
-            X: 10,
-            Y: 5
+            X: 15,
+            Y: 9
         };
 
         this.vCell = new Vector2();
@@ -263,7 +263,6 @@ class FlowField extends PIXI.Container {
     }
 
     plotGrid() {
-        this.graphics.clear();
 
         this.graphics.lineStyle(.5, 0x00ff00, .5);
         // drawField cols
@@ -278,17 +277,50 @@ class FlowField extends PIXI.Container {
         }
     }
 
+    drawGrid() {
+
+        this.graphics.lineStyle(.5, 0xffffff, .5);
+        // drawField cols
+        for (var i = 0; i < this.RESOLUTION.X; i++) {
+            this.graphics.moveTo(i * this.cellWidth, 0);
+            this.graphics.lineTo(i * this.cellWidth, this.size.HEIGHT);
+
+            this.graphics.beginFill(0xff4455, .5);
+            this.graphics.drawRect(i * this.cellWidth, 0, this.cellWidth, this.cellHeight)
+            this.graphics.endFill();
+        }
+        // drawField rows
+        for (var i = 1; i < this.RESOLUTION.Y; i++) {
+            this.graphics.moveTo(0, i * this.cellHeight);
+            this.graphics.lineTo(this.size.WIDTH, i * this.cellHeight);
+        }
+    }
+
 
     drawField() {
 
         this.graphics.clear();
 
+        //this.drawGrid();
+
+        //this.graphics.lineStyle(.5, 0x00ff00, .5);
+        //// drawField cols
+        //for (var i = 1; i < this.RESOLUTION.X; i++) {
+        //    this.graphics.moveTo(i * this.cellWidth, 0);
+        //    this.graphics.lineTo(i * this.cellWidth, this.size.HEIGHT);
+        //}
+        //// drawField rows
+        //for (var i = 1; i < this.RESOLUTION.Y; i++) {
+        //    this.graphics.moveTo(0, i * this.cellHeight);
+        //    this.graphics.lineTo(this.size.WIDTH, i * this.cellHeight);
+        //}
+
         for (var i = 0; i < this.vArray.length; i++) {
 
             for (var j = 0; j < this.vArray[1].length; j++) {
 
-                this.graphics.lineStyle(1, 0x006699, .1);
-                this.graphics.beginFill(0xcc33ff);
+                this.graphics.lineStyle(1, 0x232323, .1);
+                this.graphics.beginFill(0x232323);
 
                 //drawField center point
                 this.centerX = i * this.cellWidth + this.cellWidth * .5;
@@ -296,14 +328,20 @@ class FlowField extends PIXI.Container {
                 this.graphics.drawCircle(this.centerX, this.centerY, 2, 0, 2 * 3.14, false);
                 this.graphics.endFill();
 
+                this.magVector = this.vArray[i][j].clone();
+                //var value = mathUtils.convertToRange(this.magVector.length(), [0, 18], [0, 1]);
+                var value = mathUtils.convertToRange(this.magVector.angle(), [0, 2 * Math.PI], [0, 1]);
+
+                this.graphics.beginFill(0xff4455, value);
+                this.graphics.drawRect(i * this.cellWidth, j * this.cellHeight, this.cellWidth, this.cellHeight)
+                this.graphics.endFill();
+
                 // drawField mag vector
                 this.graphics.moveTo(this.centerX, this.centerY);
-                this.magVector = this.vArray[i][j].clone();
-                //value = mathUtils.convertToRange(this.magVector.length(), [0, 18], [0, 1]);
                 //this.color.setHSV(.5 + value * .5, .5, 0.0);
                 //this.color.setBrightness(.5 + value);
 
-                this.graphics.lineStyle(1, 0xf3f3f3, 1);
+                this.graphics.lineStyle(1, 0x334477, 1);
 
                 //this.magVector.normalize();
                 //this.magVector.multiplyScalar(20);

@@ -5,6 +5,7 @@
 var PIXI = require('pixi.js');
 
 import {SIM_DEFAULT} from '../config';
+import {PSYSTEM} from '../config';
 import {DEFAULT_AGENT} from '../config';
 import {INPUT_DATA} from '../config';
 import Agent from '../particles/agent';
@@ -22,6 +23,7 @@ class ParticleSystem extends PIXI.Container {
         this.size = _size;
         this.origin = _origin;
         this.bounds = new Bounds(0, 0, this.size.WIDTH, this.size.HEIGHT);
+        this.boundType = PSYSTEM.BOUND_TYPE.wrap;
 
         this.vFriction = new Vector2();
 
@@ -123,15 +125,19 @@ class ParticleSystem extends PIXI.Container {
                 agent.tail.pop();
             }
 
-            // case wrap bounds!  TODO
-            if (agent.position.x < this.bounds.x1 || agent.position.x > this.bounds.x2) {
-                agent.tail = []
+
+            if (this.boundType == 'wrap') {
+                if (
+                    agent.position.x < this.bounds.x1 ||
+                    agent.position.x > this.bounds.x2 ||
+                    agent.position.y < this.bounds.y1 ||
+                    agent.position.y > this.bounds.y2
+                )
+                    agent.tail = []
+
+
             }
 
-            if (agent.position.y < this.bounds.y1 || agent.position.y > this.bounds.y2) {
-                agent.tail = []
-            }
-            // case wrap bounds!  TODO
 
             this.gfx.lineStyle(1, agent.color);
             this.gfx.moveTo(agent.position.x, agent.position.y);
@@ -148,7 +154,11 @@ class ParticleSystem extends PIXI.Container {
 
         this.particles.forEach(agent => {
 
-            agent.bounce(this.bounds);
+            if (this.boundType == 'bounce') {
+                agent.bounce(this.bounds);
+            } else if (this.boundType == 'wrap') {
+                agent.wrap(this.bounds);
+            }
 
             agent.update();
 
