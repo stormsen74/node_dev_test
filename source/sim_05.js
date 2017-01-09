@@ -24,8 +24,7 @@ class Sim_05 extends Sim {
         super()
 
 
-
-        this.flowField = new FlowField(_size, FIELD_PARAMS.type.linearSystemField);
+        this.flowField = new FlowField(_size, FIELD_PARAMS.type.perlinField);
         this.flowField.updateDraw = true;
         this.addChild(this.flowField);
 
@@ -47,8 +46,6 @@ class Sim_05 extends Sim {
     test() {
         //console.log('call', 5, FIELD_PARAMS.minSide);
     }
-
-
 
 
     onStartDrag() {
@@ -87,17 +84,15 @@ class Sim_05 extends Sim {
 
     update() {
 
-
         this.flowField.update();
 
         // inherit
         if (this.vMouse.pressed) {
+            this.flowField.modify();
         }
 
 
     }
-
-
 
 
 }

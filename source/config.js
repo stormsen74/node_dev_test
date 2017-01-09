@@ -77,6 +77,8 @@ export const COLORS = {
 };
 
 export const FIELD_PARAMS = {
+    deltaT: 0.0025,
+    
     type: {
         vectorField: 'vectorField',
         linearSystemField: 'linearSystemField',
@@ -84,8 +86,7 @@ export const FIELD_PARAMS = {
     },
     perlin: {
         FIELD_SCALE: 10,
-        FIELD_STRENGTH: 15,
-        deltaT: 0.0025
+        FIELD_STRENGTH: 15
     },
     system2D: {
         a1: 1,

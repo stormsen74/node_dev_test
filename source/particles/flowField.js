@@ -24,8 +24,8 @@ class FlowField extends PIXI.Container {
         this.updateDraw = true;
 
         this.RESOLUTION = {
-            X: 15,
-            Y: 9
+            X: 30,
+            Y: 15
         };
 
         this.vCell = new Vector2();
@@ -89,7 +89,7 @@ class FlowField extends PIXI.Container {
                     this.gui.add(this.CONFIG, 'INFO');
                     this.gui.add(FIELD_PARAMS.perlin, 'FIELD_SCALE').min(1).max(10).step(0.01).name('FIELD_SCALE').onChange(this.stepPerlinField.bind(this));
                     this.gui.add(FIELD_PARAMS.perlin, 'FIELD_STRENGTH').min(1).max(30).step(0.01).name('FIELD_STRENGTH').onChange(this.stepPerlinField.bind(this));
-                    this.gui.add(FIELD_PARAMS.perlin, 'deltaT').min(0.001).max(0.01).step(0.0001).name('deltaT').onChange(this.stepPerlinField.bind(this));
+                    this.gui.add(FIELD_PARAMS, 'deltaT').min(0.001).max(0.01).step(0.0001).name('deltaT').onChange(this.stepPerlinField.bind(this));
 
                 }
                 this.initPerlinField();
@@ -200,7 +200,7 @@ class FlowField extends PIXI.Container {
 
     stepPerlinField() {
 
-        this.t += FIELD_PARAMS.perlin.deltaT;
+        this.t += FIELD_PARAMS.deltaT;
 
 
         for (var i = 0, len = this.vArray.length; i < len; i++) {
@@ -248,6 +248,14 @@ class FlowField extends PIXI.Container {
         // console.log(vLookup.y, canvas.height);
 
         return this.vArray[this.mappedX][this.mappedY].clone();
+    }
+
+    modify() {
+        for (var i = 0, len = this.vArray.length; i < len; i++) {
+            for (var j = 0, len2 = this.vArray[1].length; j < len2; j++) {
+                this.vArray[i][j] = this.vArray[i][j].clone().rotate(.05).clone();
+            }
+        }
     }
 
 
@@ -319,6 +327,12 @@ class FlowField extends PIXI.Container {
 
             for (var j = 0; j < this.vArray[1].length; j++) {
 
+                this.magVector = this.vArray[i][j].clone();
+
+                this.graphics.lineStyle(1, 0x334477, 1);
+                this.graphics.moveTo(this.centerX, this.centerY);
+                this.graphics.lineTo(this.centerX + this.magVector.x, this.centerY + this.magVector.y);
+
                 this.graphics.lineStyle(1, 0x232323, .1);
                 this.graphics.beginFill(0x232323);
 
@@ -328,24 +342,22 @@ class FlowField extends PIXI.Container {
                 this.graphics.drawCircle(this.centerX, this.centerY, 2, 0, 2 * 3.14, false);
                 this.graphics.endFill();
 
-                this.magVector = this.vArray[i][j].clone();
-                //var value = mathUtils.convertToRange(this.magVector.length(), [0, 18], [0, 1]);
-                var value = mathUtils.convertToRange(this.magVector.angle(), [0, 2 * Math.PI], [0, 1]);
+                // drawField mag vector
+                //this.color.setHSV(.5 + value * .5, .5, 0.0);
+                //this.color.setBrightness(.5 + value);
+
+
+                //this.magVector.normalize();
+                //this.magVector.multiplyScalar(20);
+
+
+                // var value = mathUtils.convertToRange(this.magVector.length(), [0, 25], [0, 1]);
+                var value = mathUtils.convertToRange(this.magVector.angle(), [0, 2 * 3.14], [.2, 1]);
+                // console.log(this.magVector.length())
 
                 this.graphics.beginFill(0xff4455, value);
                 this.graphics.drawRect(i * this.cellWidth, j * this.cellHeight, this.cellWidth, this.cellHeight)
                 this.graphics.endFill();
-
-                // drawField mag vector
-                this.graphics.moveTo(this.centerX, this.centerY);
-                //this.color.setHSV(.5 + value * .5, .5, 0.0);
-                //this.color.setBrightness(.5 + value);
-
-                this.graphics.lineStyle(1, 0x334477, 1);
-
-                //this.magVector.normalize();
-                //this.magVector.multiplyScalar(20);
-                this.graphics.lineTo(this.centerX + this.magVector.x, this.centerY + this.magVector.y);
 
             }
         }
