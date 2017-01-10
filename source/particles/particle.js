@@ -9,8 +9,9 @@ class Particle extends PIXI.Container {
     constructor(x = 0, y = 0, mass = 1) {
         super();
 
-        this.position.x = x;
-        this.position.y = y;
+
+
+        this.position = new Vector2(x, y)
 
         this.tail = [];
 

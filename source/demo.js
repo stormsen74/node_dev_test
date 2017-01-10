@@ -12,6 +12,7 @@ import Sim_02 from './sim_02';
 import Sim_03 from './sim_03';
 import Sim_04 from './sim_04';
 import Sim_05 from './sim_05';
+import Sim_06 from './sim_06';
 
 import {DEFAULT_SIZE} from './config';
 
@@ -32,7 +33,7 @@ class Demo {
         }
 
 
-        this.sim = new Sim_05(DEFAULT_SIZE)
+        this.sim = new Sim_06(DEFAULT_SIZE)
 
         this.init_PIXI_Renderer();
         this.initSim();
