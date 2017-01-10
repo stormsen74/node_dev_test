@@ -29,14 +29,19 @@ class Sim_06 extends Sim {
 
         this.t = 0;
         this.vCenter = new Vector2(_size.WIDTH * .5, _size.HEIGHT - 50);
-        this.vPosition = new Vector2(_size.HEIGHT - 100, 0);
-        this.particle = new Particle();
-        this.addChild(this.particle);
 
+        this.vecRotation = new Vector2(_size.HEIGHT - 100, 0);
+
+        this.pTarget = new Particle();
+        this.addChild(this.pTarget);
+
+        this.PARAMS = {
+            SEEK_MAX_SPEED: 2,
+            SEEK_MAX_FORCE: .3
+        }
 
         this.driver = new Agent(this.vCenter, 1)
-        this.driver.SEEK_MAX_SPEED = 2;
-        this.driver.SEEK_MAX_FORCE = 0.3;
+
         this.addChild(this.driver)
 
         this.gfx = new PIXI.Graphics();
@@ -45,11 +50,18 @@ class Sim_06 extends Sim {
 
         this.update();
 
-        // this.addChild(this.target)
 
-        this.draw = true;
-        this.update();
+        this.gui = new dat.GUI();
+        //this.CONFIG.INFO = '';
+        //this.gui.add(this.CONFIG, 'INFO');
+        this.gui.add(this.PARAMS, 'SEEK_MAX_SPEED').min(1).max(15).step(0.01).name('SEEK_MAX_SPEED').onChange(this.updateParams.bind(this));
+        this.gui.add(this.PARAMS, 'SEEK_MAX_FORCE').min(.1).max(1).step(0.01).name('SEEK_MAX_FORCE').onChange(this.updateParams.bind(this));
 
+    }
+
+    updateParams() {
+        this.driver.SEEK_MAX_SPEED = this.PARAMS.SEEK_MAX_SPEED;
+        this.driver.SEEK_MAX_FORCE = this.PARAMS.SEEK_MAX_FORCE;
     }
 
 
@@ -92,38 +104,47 @@ class Sim_06 extends Sim {
     }
 
 
+    reset() {
+        this.driver.location.x = this.vCenter.x;
+        this.driver.location.y = this.vCenter.y;
+        this.gfx.moveTo(this.vCenter.x, this.vCenter.y);
+        //this.gfx.clear();
+    }
+
+
     update() {
+
+
+
 
 
         this.t += .05;
 
-        this.vPosition.toPolar();
+        this.vecRotation.toPolar();
         // phi
-        this.vPosition.y = .5 * Math.sin(this.t) - Math.PI * .5;
-        this.vPosition.jitter(0, .1)
+        this.vecRotation.y = .5 * Math.sin(this.t) - Math.PI * .5;
         // r
-        // this.vPosition.x = 100;
+        // this.vecRotation.x = 100;
+        this.vecRotation.toCartesian();
 
-        this.vPosition.toCartesian();
+
+        this.pTarget.position.x = this.vCenter.x + this.vecRotation.x;
+        this.pTarget.position.y = this.vCenter.y + this.vecRotation.y;
 
 
-        this.particle.position.x = this.vCenter.x + this.vPosition.x;
-        this.particle.position.y = this.vCenter.y + this.vPosition.y;
+        this.gfx.moveTo(this.driver.position.x, this.driver.position.y);
 
-        if (Vector2.getDistance(this.driver.position, this.particle.position) > 150 && this.draw) {
+        this.driver.seek(this.pTarget.position);
+        this.driver.update();
 
-            this.gfx.moveTo(this.driver.position.x, this.driver.position.y);
+        this.gfx.lineTo(this.driver.position.x, this.driver.position.y);
 
-            this.driver.seek(this.particle.position);
-            this.driver.update();
 
-            this.gfx.lineTo(this.driver.position.x, this.driver.position.y);
-
-        } else {
-
-            this.draw = false
-
+        if (Vector2.getDistance(this.driver.position, this.pTarget.position) <= 150) {
+            this.reset();
         }
+
+
 
 
         // inherit
