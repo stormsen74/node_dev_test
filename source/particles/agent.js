@@ -45,24 +45,26 @@ class Agent extends PIXI.Container {
         this.color = Random.item(COLORS.DEFAULT);
 
         this.body = new PIXI.Graphics();
-        this.body.alpha = .2;
-        this.body.beginFill(this.color);
-        let r = Math.ceil(this.mass) * 3;
+        this.body.alpha = .5;
+        // this.body.beginFill(this.color);
+        this.body.beginFill(0x00cc00);
+        let r = Math.ceil(this.mass) * 5;
         this.SEPERATE_RADIUS = 2 * r;
         this.body.drawCircle(0, 0, r);
         this.body.endFill();
         //this.body.cacheAsBitmap = true;
 
         this.vDebug = new PIXI.Graphics();
-        this.vDebug.lineStyle(1, this.color);
+        // this.vDebug.lineStyle(1, this.color);
+        this.vDebug.lineStyle(1, 0x00cc00);
         // this.vDebug.x += r;
 
         this.vDebug.moveTo(0, 0);
-        this.vDebug.lineTo(1.5 * r, 0);
+        this.vDebug.lineTo(3 * r, 0);
 
 
         this.addChild(this.body);
-        //this.addChild(this.vDebug);
+        this.addChild(this.vDebug);
         //this.body.blendMode = PIXI.BLEND_MODES.ADD;
 
         //console.log(DEFAULT_AGENT)
