@@ -22,25 +22,36 @@ class Sim_06 extends Sim {
 
         //this.init();
         this.size = _size;
-        this.t = 0;
-        this.vCenter = new Vector2(this.size.WIDTH * .5, this.size.HEIGHT - 50);
 
-        this.vecRotation = new Vector2(0, this.size.HEIGHT - 100);
+        this.t = 0;
+        this.circleRadius = this.size.HEIGHT - 100;
+        this.sim = true;
+        this.debug = true;
+
+        this.vCenter = new Vector2(this.size.WIDTH * .5, this.size.HEIGHT);
+
+        this.vecRotation = new Vector2(0, this.circleRadius);
         this.vecRotation.toPolar();
         // phi
         this.vecRotation.y = mathUtils.degToRad(-90);
         this.vecRotation.toCartesian();
         console.log(this.vecRotation.length())
 
+        this.vecTarget = new Vector2(0, this.circleRadius);
+        this.vecTarget.toPolar();
+        this.vecTarget.y = mathUtils.degToRad(-90);
+        this.vecTarget.toCartesian();
+
         this.pTarget = new Particle();
+        this.pTarget.alpha = .4;
         this.pTarget.position.x = this.vCenter.x + this.vecRotation.x;
         this.pTarget.position.y = this.vCenter.y + this.vecRotation.y;
         this.addChild(this.pTarget);
 
         this.PARAMS = {
-            SEEK_MAX_SPEED: 2,
+            SEEK_MAX_SPEED: 7.75,
             SEEK_MAX_FORCE: .3,
-            TIME_STEP: .05,
+            TIME_STEP: .01,
             PERLIN_START_ANGLE: -90,
             PERLIN_RANGE: 45,
             ANGLE: {
@@ -59,24 +70,40 @@ class Sim_06 extends Sim {
         this.addChild(this.gfx);
 
 
+        this.debug_gfx = new PIXI.Graphics();
+        this.addChild(this.debug_gfx);
+
+
         this.SIMPLEX = new SimplexNoise();
 
+        this.initDAT();
 
+        this.updateParams();
+
+    }
+
+    initDAT() {
         this.gui = new dat.GUI();
         //this.CONFIG.INFO = '';
         //this.gui.add(this.CONFIG, 'INFO');
         this.gui.add(this.PARAMS, 'SEEK_MAX_SPEED').min(1).max(15).step(0.01).name('SEEK_MAX_SPEED').onChange(this.updateParams.bind(this));
         this.gui.add(this.PARAMS, 'SEEK_MAX_FORCE').min(.1).max(1).step(0.01).name('SEEK_MAX_FORCE').onChange(this.updateParams.bind(this));
         this.gui.add(this.PARAMS, 'TIME_STEP').min(.001).max(.3).step(0.01).name('TIME_STEP');
+        this.gui.add(this, 'f').name('play/pause');
 
         var f1 = this.gui.addFolder('perlin-based target');
         f1.add(this.PARAMS, 'PERLIN_START_ANGLE').min(-180).max(0).step(0.01).name('PERLIN_START_ANGLE').onChange(this.updateParams.bind(this));
         f1.add(this.PARAMS, 'PERLIN_RANGE').min(0).max(90).step(0.01).name('PERLIN_RANGE').onChange(this.updateParams.bind(this));
         f1.open();
+    }
 
-        this.updateParams();
-
-
+    f() {
+        console.log('call')
+        if (this.sim) {
+            this.sim = false;
+        } else {
+            this.sim = true;
+        }
     }
 
     updateParams() {
@@ -85,6 +112,10 @@ class Sim_06 extends Sim {
 
         this.PARAMS.ANGLE.MIN = mathUtils.degToRad(this.PARAMS.PERLIN_START_ANGLE - this.PARAMS.PERLIN_RANGE);
         this.PARAMS.ANGLE.MAX = mathUtils.degToRad(this.PARAMS.PERLIN_START_ANGLE + this.PARAMS.PERLIN_RANGE);
+
+        this.vecTarget.toPolar();
+        this.vecTarget.y = mathUtils.degToRad(this.PARAMS.PERLIN_START_ANGLE);
+        this.vecTarget.toCartesian();
     }
 
 
@@ -134,54 +165,89 @@ class Sim_06 extends Sim {
         this.driver.location.x = this.vCenter.x;
         this.driver.location.y = this.vCenter.y;
         this.gfx.moveTo(this.vCenter.x, this.vCenter.y);
-
     }
 
 
     update() {
 
-        this.t += this.PARAMS.TIME_STEP;
+        if (this.sim) {
+            this.t += this.PARAMS.TIME_STEP;
 
-        /*------------------------------------------------
-         perlin-based target
-         -------------------------------------------------*/
+            /*------------------------------------------------
+             perlin-based target
+             -------------------------------------------------*/
 
-        this.vecRotation.toPolar();
-        this.vecRotation.y = mathUtils.convertToRange(this.SIMPLEX.noise2D(this.t, 0), [-1, 1], [this.PARAMS.ANGLE.MIN, this.PARAMS.ANGLE.MAX]);
-        this.vecRotation.toCartesian();
+            this.vecRotation.toPolar();
+            this.vecRotation.y = mathUtils.convertToRange(this.SIMPLEX.noise2D(this.t, 0), [-1, 1], [this.PARAMS.ANGLE.MIN, this.PARAMS.ANGLE.MAX]);
+            this.vecRotation.toCartesian();
 
-        /*------------------------------------------------
-         sin-based target
-         -------------------------------------------------*/
+            /*------------------------------------------------
+             sin-based target
+             -------------------------------------------------*/
 
-        // this.vecRotation.toPolar();
-        // this.vecRotation.y = .5 * Math.sin(this.t) - Math.PI * .5;
-        // this.vecRotation.toCartesian();
+            // this.vecRotation.toPolar();
+            // this.vecRotation.y = .5 * Math.sin(this.t) - Math.PI * .5;
+            // this.vecRotation.toCartesian();
 
-        /*------------------------------------------------
-         update position
-         -------------------------------------------------*/
+            /*------------------------------------------------
+             update position
+             -------------------------------------------------*/
 
-        this.pTarget.position.x = this.vCenter.x + this.vecRotation.x;
-        this.pTarget.position.y = this.vCenter.y + this.vecRotation.y;
+            this.pTarget.position.x = this.vCenter.x + this.vecRotation.x;
+            this.pTarget.position.y = this.vCenter.y + this.vecRotation.y;
 
-        // TODO Lifecycle
-        var p = mathUtils.convertToRange(this.driver.location.y, [150, this.vCenter.y], [0, 1])
-        this.gfx.lineStyle(p * 10, 0xffffff, 1);
+            // TODO Lifecycle
+            var p = mathUtils.convertToRange(this.driver.location.y, [150, this.vCenter.y], [0, 1])
+            this.gfx.lineStyle(p * 10, 0xffffff, 1);
 
-        this.gfx.moveTo(this.driver.location.x, this.driver.location.y);
+            this.gfx.moveTo(this.driver.location.x, this.driver.location.y);
 
-        this.driver.seek(this.pTarget.position);
-        this.driver.update();
+            this.driver.seek(this.pTarget.position);
+            this.driver.update();
 
-        this.gfx.lineTo(this.driver.location.x, this.driver.location.y);
+            this.gfx.lineTo(this.driver.location.x, this.driver.location.y);
 
-        // console.log(this.driver.location.y,this.vCenter.y)
+            // console.log(this.driver.location.y,this.vCenter.y)
 
 
-        if (this.driver.location.y <= 150) {
+            if (this.driver.location.y <= 150) {
 
-            this.reset();
+                this.reset();
+            }
+
+
+            if (this.debug) {
+                this.debug_gfx.clear();
+
+                this.debug_gfx.lineStyle(1, 0x00ff33, .4);
+                this.debug_gfx.drawCircle(this.vCenter.x, this.vCenter.y, this.circleRadius);
+
+                //this.debug_gfx.moveTo(this.vCenter.x, this.vCenter.y);
+                //this.debug_gfx.lineTo(this.vCenter.x + this.vecRotation.x, this.vCenter.y + this.vecRotation.y);
+
+                this.debug_gfx.lineStyle(1, 0xcccccc, .4);
+                this.debug_gfx.moveTo(this.vCenter.x, this.vCenter.y);
+                this.debug_gfx.lineTo(this.vCenter.x + this.vecTarget.x, this.vCenter.y + this.vecTarget.y);
+
+                this.debug_gfx.lineStyle(1, 0xbbbbbb, .2);
+
+                //l
+                this.debug_gfx.moveTo(this.vCenter.x, this.vCenter.y);
+                var pLeft = this.vecTarget.clone();
+                pLeft.toPolar().y = mathUtils.degToRad(this.PARAMS.PERLIN_START_ANGLE - this.PARAMS.PERLIN_RANGE);;
+                pLeft.toCartesian();
+
+                this.debug_gfx.lineTo(this.vCenter.x + pLeft.x, this.vCenter.y + pLeft.y);
+
+                //r
+                this.debug_gfx.moveTo(this.vCenter.x, this.vCenter.y);
+                var pRight= this.vecTarget.clone();
+                pRight.toPolar().y = mathUtils.degToRad(this.PARAMS.PERLIN_START_ANGLE + this.PARAMS.PERLIN_RANGE);
+                pRight.toCartesian();
+
+                this.debug_gfx.lineTo(this.vCenter.x + pRight.x, this.vCenter.y + pRight.y);
+
+            }
         }
 
 
