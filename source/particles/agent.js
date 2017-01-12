@@ -23,6 +23,7 @@ class Agent extends PIXI.Container {
         this.VELOCITY_MIN = 0.05;
         this.VELOCITY_MAX = 10;
         this.TAIL_LENGTH = 20;
+        this.LIFESPAN = 100;
 
 
         this.mass = mass;
@@ -154,6 +155,11 @@ class Agent extends PIXI.Container {
         this.acceleration.add(this.vecForce);
     }
 
+
+    isDead() {
+        return this.LIFESPAN < 0 ? true : false;
+    }
+
     /*------------------------------------------------
      update
      -------------------------------------------------*/
@@ -172,6 +178,10 @@ class Agent extends PIXI.Container {
 
         // set acceleration to zero!
         this.acceleration.multiplyScalar(0);
+
+
+        this.LIFESPAN -= 1;
+
 
     }
 

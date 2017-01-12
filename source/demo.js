@@ -33,7 +33,7 @@ class Demo {
         }
 
 
-        this.sim = new Sim_06(DEFAULT_SIZE)
+        this.running = new Sim_06(DEFAULT_SIZE)
 
         this.init_PIXI_Renderer();
         this.initSim();
@@ -102,14 +102,14 @@ class Demo {
 
     initSim() {
 
-        this.stage.addChild(this.sim)
+        this.stage.addChild(this.running)
 
     }
 
 
     update() {
 
-        this.sim.update();
+        this.running.update();
 
     }
 
