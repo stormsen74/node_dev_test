@@ -47,7 +47,6 @@ class Sim_06 extends Sim {
                 MIN: 0,
                 MAX: 0
             }
-
         }
 
         this.vCenter = new Vector2(this.size.WIDTH * .5, this.size.HEIGHT);
