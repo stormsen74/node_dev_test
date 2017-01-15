@@ -28,16 +28,17 @@ class Sim_03 extends Sim {
         this.addChild(this.lines);
 
         //https://www.npmjs.com/package/colormap
-        let options = {
-            colormap: 'copper',   // pick a builtin colormap or add your own
-            nshades: 30,       // how many divisions
-            format: 'hex',     // "hex" or "rgb" or "rgbaString"
-            alpha: 1           // set an alpha value or a linear alpha mapping [start, end]
-        }
-        CLR.PALETTE = colormap(options);
-        for (var i = 0; i < CLR.PALETTE.length; i++) {
-            CLR.PALETTE[i] = this.hexStringToNumber(CLR.PALETTE[i])
-        }
+        //let options = {
+        //    colormap: 'copper',   // pick a builtin colormap or add your own
+        //    nshades: 30,       // how many divisions
+        //    format: 'hex',     // "hex" or "rgb" or "rgbaString"
+        //    alpha: 1           // set an alpha value or a linear alpha mapping [start, end]
+        //}
+        //var PALETTE = colormap(options);
+        //for (var i = 0; i < PALETTE.length; i++) {
+        //    PALETTE[i] = this.hexStringToNumber(PALETTE[i])
+        //    console.log(PALETTE)
+        //}
 
 
         this.init();

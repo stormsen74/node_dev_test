@@ -23,8 +23,9 @@ class Sim_06 extends Sim {
         /*------------------------------------------------
          - circle radius ... (dat)
          - render style (shadowing) / cubic curve
-         - emit particles (lines) on growth
+         - emit particles (lines) on growth / draw lines etc. at grow
          - filters on gfx
+         - colors
          -------------------------------------------------*/
 
 
@@ -35,10 +36,13 @@ class Sim_06 extends Sim {
         this.circleRadius = this.size.HEIGHT - 100;
         this.running = true;
         this.debugMode = true;
+        this.waypoints = [];
+
 
         this.PARAMS = {
             SEEK_MAX_SPEED: 7.75,
             SEEK_MAX_FORCE: .3,
+            LIFESPAN: 100,
             TIME_STEP: .01,
             CIRCLE_RADIUS: 620,
             PERLIN_START_ANGLE: -90,
@@ -48,6 +52,16 @@ class Sim_06 extends Sim {
                 MAX: 0
             }
         }
+
+        for (var i = 0; i < 5; i++) {
+            this.waypoints[i] =
+            {
+                t: i * 20,
+                locator: new Vector2()
+            }
+        }
+
+        console.log(this.waypoints);
 
         this.vCenter = new Vector2(this.size.WIDTH * .5, this.size.HEIGHT);
 
@@ -98,8 +112,10 @@ class Sim_06 extends Sim {
         //this.gui.add(this.CONFIG, 'INFO');
         this.gui.add(this.PARAMS, 'SEEK_MAX_SPEED').min(1).max(15).step(0.01).name('SEEK_MAX_SPEED').onChange(this.updateParams.bind(this));
         this.gui.add(this.PARAMS, 'SEEK_MAX_FORCE').min(.1).max(1).step(0.01).name('SEEK_MAX_FORCE').onChange(this.updateParams.bind(this));
+        this.gui.add(this.PARAMS, 'LIFESPAN').min(50).max(400).step(0.01).name('LIFESPAN');
         this.gui.add(this.PARAMS, 'TIME_STEP').min(.001).max(.3).step(0.01).name('TIME_STEP');
         this.gui.add(this, 'toggleRun').name('play/pause');
+        this.gui.add(this, 'reset').name('reset');
 
         var f1 = this.gui.addFolder('perlin-based target');
         f1.add(this.PARAMS, 'PERLIN_START_ANGLE').min(-180).max(0).step(0.01).name('PERLIN_START_ANGLE').onChange(this.updateParams.bind(this));
@@ -125,6 +141,8 @@ class Sim_06 extends Sim {
         this.vecTarget.toPolar();
         this.vecTarget.y = mathUtils.degToRad(this.PARAMS.PERLIN_START_ANGLE);
         this.vecTarget.toCartesian();
+
+        this.driver.LIFESPAN = this.PARAMS.LIFESPAN;
     }
 
     onStartDrag() {
@@ -163,14 +181,30 @@ class Sim_06 extends Sim {
 
     reset() {
         console.log('reset')
+
         this.gfx.clear();
         this.gfx.lineStyle(1, 0xffffff, 1);
         this.driver.location.x = this.vCenter.x;
         this.driver.location.y = this.vCenter.y;
         this.gfx.moveTo(this.vCenter.x, this.vCenter.y);
 
-        this.driver.LIFESPAN = 100;
+        this.driver.LIFESPAN = this.PARAMS.LIFESPAN;
 
+
+        for (var i = 0; i < 5; i++) {
+            this.waypoints[i] =
+            {
+                t: i * 20,
+                locator: new Vector2()
+            }
+        }
+
+    }
+
+    plotPoint(v) {
+        this.gfx.lineStyle(1, 0xcc0000, 1);
+        this.gfx.drawCircle(v.x, v.y, 10)
+        console.log('plot', v)
     }
 
 
@@ -189,16 +223,14 @@ class Sim_06 extends Sim {
              -------------------------------------------------*/
 
             this.vecRotation.toPolar().setY(mathUtils.convertToRange(this.SIMPLEX.noise2D(this.t, 0), [-1, 1], [this.PARAMS.ANGLE.MIN, this.PARAMS.ANGLE.MAX]));
-            // this.vecRotation.y = mathUtils.convertToRange(this.SIMPLEX.noise2D(this.t, 0), [-1, 1], [this.PARAMS.ANGLE.MIN, this.PARAMS.ANGLE.MAX]);
             this.vecRotation.toCartesian();
 
             /*------------------------------------------------
              sin-based target
              -------------------------------------------------*/
 
-            // this.vecRotation.toPolar();
-            // this.vecRotation.y = .5 * Math.sin(this.t) - Math.PI * .5;
-            // this.vecRotation.toCartesian();
+            //this.vecRotation.toPolar().setY(1 * Math.sin(5 * this.t) - Math.PI * .5)
+            //this.vecRotation.toCartesian();
 
             /*------------------------------------------------
              update position
@@ -207,17 +239,24 @@ class Sim_06 extends Sim {
             this.pTarget.position.x = this.vCenter.x + this.vecRotation.x;
             this.pTarget.position.y = this.vCenter.y + this.vecRotation.y;
 
+
             // TODO Lifecycle
-            var p = mathUtils.convertToRange(this.driver.LIFESPAN, [0, 100], [0, 1])
-            this.gfx.lineStyle(p * 10, 0xffffff, 1);
-
+            var p = mathUtils.convertToRange(this.driver.LIFESPAN, [0, this.PARAMS.LIFESPAN], [0, 1])
+            this.gfx.lineStyle(1, 0x00ccff, 1);
             this.gfx.moveTo(this.driver.location.x, this.driver.location.y);
-
             this.driver.seek(this.pTarget.position);
             this.driver.update();
-
-
             this.gfx.lineTo(this.driver.location.x, this.driver.location.y);
+
+            for (var i = 0; i < this.waypoints.length; i++) {
+                if (this.driver.LIFESPAN == this.waypoints[i].t && this.waypoints[i].locator.x == 0) {
+                    this.waypoints[i].locator.x = this.driver.location.x;
+                    this.waypoints[i].locator.y = this.driver.location.y;
+
+                    this.plotPoint(this.waypoints[i].locator)
+                }
+            }
+
 
             /*------------------------------------------------
              debugMode

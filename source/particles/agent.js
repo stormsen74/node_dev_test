@@ -23,7 +23,7 @@ class Agent extends PIXI.Container {
         this.VELOCITY_MIN = 0.05;
         this.VELOCITY_MAX = 10;
         this.TAIL_LENGTH = 20;
-        this.LIFESPAN = 100;
+        this.LIFESPAN = 150;
 
 
         this.mass = mass;
@@ -43,12 +43,12 @@ class Agent extends PIXI.Container {
 
         this.tail = [];
 
-        this.color = Random.item(COLORS.DEFAULT);
+        this.color = Random.item(COLORS.SHINYPHAN);
 
         this.body = new PIXI.Graphics();
         this.body.alpha = .5;
-        // this.body.beginFill(this.color);
-        this.body.beginFill(0x00cc00);
+         this.body.beginFill(this.color);
+        //this.body.beginFill(0x00cc00);
         let r = Math.ceil(this.mass) * 5;
         this.SEPERATE_RADIUS = 2 * r;
         this.body.drawCircle(0, 0, r);
@@ -56,8 +56,8 @@ class Agent extends PIXI.Container {
         //this.body.cacheAsBitmap = true;
 
         this.vDebug = new PIXI.Graphics();
-        // this.vDebug.lineStyle(1, this.color);
-        this.vDebug.lineStyle(1, 0x00cc00);
+         this.vDebug.lineStyle(1, this.color);
+        //this.vDebug.lineStyle(1, 0x00cc00);
         // this.vDebug.x += r;
 
         this.vDebug.moveTo(0, 0);
@@ -157,7 +157,7 @@ class Agent extends PIXI.Container {
 
 
     isDead() {
-        return this.LIFESPAN < 0 ? true : false;
+        return this.LIFESPAN <= 0 ? true : false;
     }
 
     /*------------------------------------------------
@@ -181,6 +181,7 @@ class Agent extends PIXI.Container {
 
 
         this.LIFESPAN -= 1;
+        //console.log(this.LIFESPAN)
 
 
     }
