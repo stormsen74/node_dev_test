@@ -17,7 +17,7 @@ class Agent extends PIXI.Container {
     constructor(_location, mass) {
         super();
 
-        this.SEEK_MAX_SPEED = 2;
+        this.SEEK_MAX_SPEED = 5;
         this.SEEK_MAX_FORCE = 0.1;
         this.FLEE_MAX_SPEED = 15;
         this.FLEE_MAX_FORCE = .5;
@@ -138,21 +138,27 @@ class Agent extends PIXI.Container {
     }
 
     wander() {
-        this.T += .01
+        this.T += .05;
 
-        this.vecWanderPosition.toPolar().setY(mathUtils.convertToRange(this.SIMPLEX.noise2D(this.T, 0), [-1, 1], [mathUtils.degToRad(-180), mathUtils.degToRad(180)]));
+
+        this.vecWanderPosition.toPolar().setY(mathUtils.convertToRange(this.SIMPLEX.noise2D(this.T, 0), [-1, 1], [mathUtils.degToRad(0), mathUtils.degToRad(360)]));
         this.vecWanderPosition.toCartesian();
+        this.vecWanderPosition.normalize();
+        this.vecWanderPosition.multiplyScalar(this.WANDER_RADIUS);
+
+        this._velocity = this.velocity.clone();
+        this._velocity.normalize().multiplyScalar(this.WANDER_RADIUS * 1.5)
 
         // this.vecWanderTarget.x = this.location.x + this.vecWanderPosition.x;
         // this.vecWanderTarget.y = this.location.y + this.vecWanderPosition.y;
 
         this.vecWanderTarget = Vector2.add(this.location, this.vecWanderPosition);
 
-
         this.seek(this.vecWanderTarget);
 
-        // circle
         this.vDebugWander.clear()
+
+        // circle
         this.vDebugWander.lineStyle(1, 0xffffff);
         this.vDebugWander.drawCircle(0, 0, this.WANDER_RADIUS)
 
@@ -160,6 +166,17 @@ class Agent extends PIXI.Container {
         this.vDebugWander.lineStyle(1, 0xff0000);
         this.vDebugWander.moveTo(0, 0)
         this.vDebugWander.lineTo(this.vecWanderPosition.x, this.vecWanderPosition.y)
+
+        // point
+        this.vDebugWander.lineStyle(0);
+        this.vDebugWander.beginFill(0x00ff55, 1);
+        this.vDebugWander.drawCircle(this.vecWanderPosition.x, this.vecWanderPosition.y, 3);
+        this.vDebugWander.endFill();
+
+        // velocity
+        this.vDebugWander.lineStyle(1, 0x00ccff);
+        this.vDebugWander.moveTo(0, 0)
+        this.vDebugWander.lineTo(this._velocity.x, this._velocity.y)
     }
 
     jitter(jX, jY) {
@@ -228,7 +245,7 @@ class Agent extends PIXI.Container {
     }
 
     /*------------------------------------------------
-     bounds 
+     bounds
      -------------------------------------------------*/
 
     wrap(bounds) {

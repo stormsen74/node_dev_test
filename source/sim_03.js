@@ -56,6 +56,7 @@ class Sim_03 extends Sim {
         for (var i = 0; i < 1; i++) {
             let agent = new Agent(new Vector2(Random() * this.size.WIDTH, Random() * this.size.HEIGHT), .2 + Random() * .2);
             agent.color = Random.item(this.PALETTE);
+            agent.TAIL_LENGTH = 150;
             this.addChild(agent);
             this.agents.push(agent);
         }
@@ -82,28 +83,44 @@ class Sim_03 extends Sim {
             this.agents.forEach(agent => {
 
                 // agent.seek(this.vMouse);
-                agent.wander();
                 // this.vFriction.set(agent.velocity.x, agent.velocity.y).multiplyScalar(-1).normalize().multiplyScalar(.3);
                 // agent.applyForce(this.vFriction);
                 agent.update();
-                agent.bounce(this.bounds)
+                agent.wander();
 
-                // agent.tail.unshift({
-                //     x: agent.position.x,
-                //     y: agent.position.y
-                // });
-                //
-                // if (agent.tail.length > agent.TAIL_LENGTH) {
-                //     agent.tail.pop();
-                // }
-                //
-                // //console.log(agent.color)
-                // this.lines.lineStyle(1, agent.color);
-                // this.lines.moveTo(agent.position.x, agent.position.y);
-                //
-                // agent.tail.forEach((point, index) => {
-                //     this.lines.lineTo(point.x, point.y);
-                // });
+                agent.wrap(this.bounds);
+
+
+
+
+                agent.tail.unshift({
+                    x: agent.position.x,
+                    y: agent.position.y
+                });
+
+                if (agent.tail.length > agent.TAIL_LENGTH) {
+                    agent.tail.pop();
+                }
+
+                //console.log(agent.color)
+                this.lines.lineStyle(1, 0xcccccc);
+                this.lines.moveTo(agent.position.x, agent.position.y);
+
+                agent.tail.forEach((point, index) => {
+                    this.lines.lineTo(point.x, point.y);
+                });
+
+
+                if (
+                    agent.position.x < this.bounds.x1 ||
+                    agent.position.x > this.bounds.x2 ||
+                    agent.position.y < this.bounds.y1 ||
+                    agent.position.y > this.bounds.y2
+                ) {
+                    console.log('-b-')
+                    agent.tail = [];
+                    this.lines.clear();
+                }
 
             });
         }
