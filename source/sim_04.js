@@ -108,7 +108,7 @@ class Sim_04 extends Sim {
 
     update() {
 
-        this.pSystem.wander(-.1, .1);
+        this.pSystem.jitter(-.1, .1);
          //this.pSystem.applyFriction(0.05);
         //this.pSystem.applyAttractor(this.attractor);
         //this.pSystem.applyRepeller(this.repeller);

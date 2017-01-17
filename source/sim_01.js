@@ -14,7 +14,7 @@ class Sim_01 extends PIXI.Container {
 
         this.t = 0;
         this.vCenter = new Vector2(_size.WIDTH* .5, _size.HEIGHT * .5);
-        this.vecRotation = new Vector2(150, 0);
+        this.vecWanderPosition = new Vector2(150, 0);
         this.particle = new Particle();
         this.lines = new PIXI.Graphics();
         this.addChild(this.lines);
@@ -31,18 +31,18 @@ class Sim_01 extends PIXI.Container {
     update() {
         this.t += .1;
 
-        this.vecRotation.toPolar();
+        this.vecWanderPosition.toPolar();
         // phi
-        this.vecRotation.y = this.t * .3;
+        this.vecWanderPosition.y = this.t * .3;
         // r
-        this.vecRotation.x = 100 + Math.random() * 20;
+        this.vecWanderPosition.x = 100 + Math.random() * 20;
 
-        this.vecRotation.toCartesian();
+        this.vecWanderPosition.toCartesian();
 
         // this.vCenter.jitter(10, 10);
 
-        this.particle.position.x = this.vCenter.x + this.vecRotation.x;
-        this.particle.position.y = this.vCenter.y + this.vecRotation.y;
+        this.particle.position.x = this.vCenter.x + this.vecWanderPosition.x;
+        this.particle.position.y = this.vCenter.y + this.vecWanderPosition.y;
 
         this.particle.tail.unshift({
             x: this.particle.position.x,

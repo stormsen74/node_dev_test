@@ -21,7 +21,7 @@ class FlowField extends PIXI.Container {
         console.log(this.type)
 
 
-        this.updateDraw = true;
+        this.updateDraw = false;
 
         this.RESOLUTION = {
             X: 30,

@@ -97,9 +97,9 @@ class ParticleSystem extends PIXI.Container {
         });
     }
 
-    wander(jX, jY, maxLength) {
+    jitter(jX, jY) {
         this.particles.forEach(agent => {
-            agent.wander(jX, jY, maxLength);
+            agent.jitter(jX, jY);
         });
     }
 

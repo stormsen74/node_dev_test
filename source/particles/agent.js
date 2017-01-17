@@ -3,6 +3,8 @@
  */
 
 var PIXI = require('pixi.js');
+var SimplexNoise = require('simplex-noise');
+
 import {Vector2} from './../math/vector2';
 import Random from '../utils/random'
 
@@ -15,8 +17,8 @@ class Agent extends PIXI.Container {
     constructor(_location, mass) {
         super();
 
-        this.SEEK_MAX_SPEED = 12;
-        this.SEEK_MAX_FORCE = 0.3;
+        this.SEEK_MAX_SPEED = 2;
+        this.SEEK_MAX_FORCE = 0.1;
         this.FLEE_MAX_SPEED = 15;
         this.FLEE_MAX_FORCE = .5;
         this.FLEE_RADIUS = 150;
@@ -26,28 +28,37 @@ class Agent extends PIXI.Container {
         this.LIFESPAN = 150;
 
 
+        this.WANDER_DISTANCE = 100;
+        this.WANDER_RADIUS = 50;
+        this.T = 0;
+        this.SIMPLEX = new SimplexNoise();
+
+
         this.mass = mass;
         this.location = new Vector2(_location.x, _location.y);
-        this.velocity = new Vector2(.5 + Random() * .5, .5 + Random() * .5);
-        this.acceleration = new Vector2(.5 + Random() * .5, .5 + Random() * .5);
+        this.velocity = new Vector2(.1 + Random() * .1, .1 + Random() * .1);
+        this.acceleration = new Vector2(.1 + Random() * .1, .1 + Random() * .1);
         this.angle = 0;
 
         this.vecDesired = new Vector2();
         this.vecSteer = new Vector2();
         this.vecSumSeperate = new Vector2();
         this.vecForce = new Vector2();
-        this.vecWander = new Vector2();
+        this.vecJitter = new Vector2();
+        this.wandertheta = 0;
+        this.vecWanderPosition = new Vector2(this.WANDER_RADIUS, 0);
+        this.vecWanderTarget = new Vector2();
 
         this.position.x = _location.x;
         this.position.y = _location.y;
 
         this.tail = [];
 
-        this.color = Random.item(COLORS.SHINYPHAN);
+        this.color = Random.item(COLORS.VENUS);
 
         this.body = new PIXI.Graphics();
         this.body.alpha = .5;
-         this.body.beginFill(this.color);
+        this.body.beginFill(this.color);
         //this.body.beginFill(0x00cc00);
         let r = Math.ceil(this.mass) * 5;
         this.SEPERATE_RADIUS = 2 * r;
@@ -56,16 +67,21 @@ class Agent extends PIXI.Container {
         //this.body.cacheAsBitmap = true;
 
         this.vDebug = new PIXI.Graphics();
-         this.vDebug.lineStyle(1, this.color);
-        //this.vDebug.lineStyle(1, 0x00cc00);
+        // this.vDebug.lineStyle(1, this.color);
+        this.vDebug.lineStyle(1, 0x00cc00);
         // this.vDebug.x += r;
 
         this.vDebug.moveTo(0, 0);
-        this.vDebug.lineTo(3 * r, 0);
+        this.vDebug.lineTo(5 * r, 0);
+
+
+        this.vDebugWander = new PIXI.Graphics();
+        this.vDebugWander.lineStyle(1, 0xffffff);
 
 
         this.addChild(this.body);
         this.addChild(this.vDebug);
+        this.addChild(this.vDebugWander);
         //this.body.blendMode = PIXI.BLEND_MODES.ADD;
 
         //console.log(DEFAULT_AGENT)
@@ -121,11 +137,36 @@ class Agent extends PIXI.Container {
 
     }
 
-    wander(jX, jY, strength) {
-        this.vecWander.jitter(jX, jY);
-        this.vecWander.normalize().multiplyScalar(.125);
+    wander() {
+        this.T += .01
 
-        this.applyForce(this.vecWander);
+        this.vecWanderPosition.toPolar().setY(mathUtils.convertToRange(this.SIMPLEX.noise2D(this.T, 0), [-1, 1], [mathUtils.degToRad(-180), mathUtils.degToRad(180)]));
+        this.vecWanderPosition.toCartesian();
+
+        // this.vecWanderTarget.x = this.location.x + this.vecWanderPosition.x;
+        // this.vecWanderTarget.y = this.location.y + this.vecWanderPosition.y;
+
+        this.vecWanderTarget = Vector2.add(this.location, this.vecWanderPosition);
+
+
+        this.seek(this.vecWanderTarget);
+
+        // circle
+        this.vDebugWander.clear()
+        this.vDebugWander.lineStyle(1, 0xffffff);
+        this.vDebugWander.drawCircle(0, 0, this.WANDER_RADIUS)
+
+        // target
+        this.vDebugWander.lineStyle(1, 0xff0000);
+        this.vDebugWander.moveTo(0, 0)
+        this.vDebugWander.lineTo(this.vecWanderPosition.x, this.vecWanderPosition.y)
+    }
+
+    jitter(jX, jY) {
+        this.vecJitter.jitter(jX, jY);
+        this.vecJitter.normalize().multiplyScalar(this.SEEK_MAX_FORCE);
+
+        this.applyForce(this.vecJitter);
     }
 
     applyField(field) {
@@ -210,20 +251,20 @@ class Agent extends PIXI.Container {
         if (this.location.x < bounds.x1) {
             this.location.x = bounds.x1;
             this.velocity.x *= -1;
-            this.vecWander.x *= -1;
+            this.vecJitter.x *= -1;
         } else if (this.location.x > bounds.x2) {
             this.location.x = bounds.x2;
             this.velocity.x *= -1;
-            this.vecWander.x *= -1;
+            this.vecJitter.x *= -1;
         }
         if (this.location.y < bounds.y1) {
             this.location.y = bounds.y1;
             this.velocity.y *= -1;
-            this.vecWander.y *= -1;
+            this.vecJitter.y *= -1;
         } else if (this.location.y > bounds.y2) {
             this.location.y = bounds.y2;
             this.velocity.y *= -1;
-            this.vecWander.y *= -1;
+            this.vecJitter.y *= -1;
             //this.velocity.multiply(0.5);
         }
 

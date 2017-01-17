@@ -8,11 +8,12 @@ var colormap = require('colormap')
 import {Vector2} from './math/vector2';
 import Agent from './particles/agent';
 import Sim from './sim';
+import Bounds from './particles/bounds';
 
 import Random from './utils/random'
 
-import { SIM_DEFAULT } from './config';
-import { CLR } from './config';
+import {SIM_DEFAULT} from './config';
+import {CLR} from './config';
 
 class Sim_03 extends Sim {
 
@@ -25,20 +26,22 @@ class Sim_03 extends Sim {
         this.agents = [];
         this.lines = new PIXI.Graphics();
         this.lines.blendMode = PIXI.BLEND_MODES.ADD;
+        this.bounds = new Bounds(0, 0, this.size.WIDTH, this.size.HEIGHT);
+        this.vFriction = new Vector2();
         this.addChild(this.lines);
 
         //https://www.npmjs.com/package/colormap
-        //let options = {
-        //    colormap: 'copper',   // pick a builtin colormap or add your own
-        //    nshades: 30,       // how many divisions
-        //    format: 'hex',     // "hex" or "rgb" or "rgbaString"
-        //    alpha: 1           // set an alpha value or a linear alpha mapping [start, end]
-        //}
-        //var PALETTE = colormap(options);
-        //for (var i = 0; i < PALETTE.length; i++) {
-        //    PALETTE[i] = this.hexStringToNumber(PALETTE[i])
-        //    console.log(PALETTE)
-        //}
+        let options = {
+            colormap: 'cubehelix',   // pick a builtin colormap or add your own
+            nshades: 16,       // how many divisions
+            format: 'hex',     // "hex" or "rgb" or "rgbaString"
+            alpha: 1           // set an alpha value or a linear alpha mapping [start, end]
+        }
+        this.PALETTE = colormap(options);
+        for (var i = 0; i < this.PALETTE.length; i++) {
+            this.PALETTE[i] = this.hexStringToNumber(this.PALETTE[i])
+        }
+        console.log(this.PALETTE)
 
 
         this.init();
@@ -50,9 +53,9 @@ class Sim_03 extends Sim {
     }
 
     init() {
-        console.log('i:')
-        for (var i = 0; i <= SIM_DEFAULT.MAX_PARTICLES; i++) {
-            let agent = new Agent(new Vector2(Random() * this.size.WIDTH, Random() * this.size.HEIGHT), .2 + Random() * .2)
+        for (var i = 0; i < 1; i++) {
+            let agent = new Agent(new Vector2(Random() * this.size.WIDTH, Random() * this.size.HEIGHT), .2 + Random() * .2);
+            agent.color = Random.item(this.PALETTE);
             this.addChild(agent);
             this.agents.push(agent);
         }
@@ -78,25 +81,29 @@ class Sim_03 extends Sim {
 
             this.agents.forEach(agent => {
 
-                agent.seek(this.vMouse);
+                // agent.seek(this.vMouse);
+                agent.wander();
+                // this.vFriction.set(agent.velocity.x, agent.velocity.y).multiplyScalar(-1).normalize().multiplyScalar(.3);
+                // agent.applyForce(this.vFriction);
                 agent.update();
+                agent.bounce(this.bounds)
 
-                agent.tail.unshift({
-                    x: agent.position.x,
-                    y: agent.position.y
-                });
-
-                if (agent.tail.length > agent.TAIL_LENGTH) {
-                    agent.tail.pop();
-                }
-
-                //console.log(agent.color)
-                this.lines.lineStyle(1, agent.color);
-                this.lines.moveTo(agent.position.x, agent.position.y);
-
-                agent.tail.forEach((point, index) => {
-                    this.lines.lineTo(point.x, point.y);
-                });
+                // agent.tail.unshift({
+                //     x: agent.position.x,
+                //     y: agent.position.y
+                // });
+                //
+                // if (agent.tail.length > agent.TAIL_LENGTH) {
+                //     agent.tail.pop();
+                // }
+                //
+                // //console.log(agent.color)
+                // this.lines.lineStyle(1, agent.color);
+                // this.lines.moveTo(agent.position.x, agent.position.y);
+                //
+                // agent.tail.forEach((point, index) => {
+                //     this.lines.lineTo(point.x, point.y);
+                // });
 
             });
         }
@@ -105,9 +112,6 @@ class Sim_03 extends Sim {
 
 
 }
-
-//Sim_03.MAX_PARTICLES = 100;
-//Sim_03.TAIL_LENGTH = 10;
 
 
 // ——————————————————————————————————————————————————

@@ -33,7 +33,7 @@ class Demo {
         }
 
 
-        this.running = new Sim_06(DEFAULT_SIZE)
+        this.running = new Sim_03(DEFAULT_SIZE)
 
         this.init_PIXI_Renderer();
         this.initSim();
