@@ -32,7 +32,7 @@ class ParticleSystem extends PIXI.Container {
         //this.gfx.blendMode = PIXI.BLEND_MODES.ADD;
         this.addChild(this.gfx);
 
-        //this.init();
+        //this.initAgents();
 
         console.log(mathUtils.getRandomBetween())
         console.log(mathUtils.getRandomBetween())

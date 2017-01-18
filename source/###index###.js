@@ -49,7 +49,7 @@ var mouseXOnMouseDown = 0;
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
-// init();
+// initAgents();
 // animate();
 
 function init() {

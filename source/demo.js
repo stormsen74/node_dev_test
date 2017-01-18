@@ -25,6 +25,12 @@ class Demo {
     constructor() {
         console.log('Demo!')
 
+        this.DEMO = {
+            renderTexture: true
+        }
+
+        this._tempTexture;
+
 
         this.size = {
             w: DEFAULT_SIZE.WIDTH,
@@ -33,7 +39,7 @@ class Demo {
         }
 
 
-        this.running = new Sim_06(DEFAULT_SIZE)
+        this.simulation = new Sim_03(DEFAULT_SIZE)
 
         this.init_PIXI_Renderer();
         this.initSim();
@@ -69,7 +75,7 @@ class Demo {
         let _screen = document.getElementById('screen');
 
         let rendererOptions = {
-            transparent: false,
+            transparent: true,
             backgroundColor: 0x404040,
             resolution: 1,
             antialias: true,
@@ -84,32 +90,33 @@ class Demo {
         this.stage = new PIXI.Container();
         this.stage.interactive = true;
 
+        if (this.DEMO.renderTexture) {
+            this.renderTexture_1 = new PIXI.RenderTexture(this.renderer, this.size.w, this.size.h);
+            this.renderTexture_2 = new PIXI.RenderTexture(this.renderer, this.size.w, this.size.h);
+            this.outputSprite = new PIXI.Sprite(this.renderTexture_1);
+            this.stage.addChild(this.outputSprite);
 
-        // render texture*
-        //this.renderTexture = new PIXI.RenderTexture(this.renderer, this.size.w, this.size.h);
-        //this.renderTexture2 = new PIXI.RenderTexture(this.renderer, this.size.w, this.size.h);
-        //this.outputSprite = new PIXI.Sprite(this.renderTexture);
-        //this.stage.addChild(this.outputSprite);
-        //
-        //this.bg = new PIXI.Graphics();
-        //this.bg.beginFill(rendererOptions.backgroundColor, 0.1);
-        //this.bg.drawRect(0, 0, this.size.w, this.size.h);
-        //this.bg.endFill();
-        //this.bg.cacheAsBitmap = true;
-        //this.stage.addChild(this.bg);
+            this.bg = new PIXI.Graphics();
+            this.bg.beginFill(rendererOptions.backgroundColor, 0.1);
+            this.bg.drawRect(0, 0, this.size.w, this.size.h);
+            this.bg.endFill();
+            this.bg.cacheAsBitmap = true;
+            this.stage.addChild(this.bg);
+
+        }
 
     }
 
     initSim() {
 
-        this.stage.addChild(this.running)
+        this.stage.addChild(this.simulation)
 
     }
 
 
     update() {
 
-        this.running.update();
+        this.simulation.update();
 
     }
 
@@ -118,16 +125,16 @@ class Demo {
         this.renderer.render(this.stage);
 
 
-        // render texture*
+        if (this.DEMO.renderTexture) {
+            // swap the buffers ...
+            this._tempTexture = this.renderTexture_1;
+            this.renderTexture_1 = this.renderTexture_2;
+            this.renderTexture_2 = this._tempTexture;
+            this.outputSprite.texture = this.renderTexture_1;
 
-        // swap the buffers ...
-        //let temp = this.renderTexture;
-        //this.renderTexture = this.renderTexture2;
-        //this.renderTexture2 = temp;
-        //this.outputSprite.texture = this.renderTexture;
-        //
-        //this.renderTexture2.render(this.stage, null, false);
-        //this.renderer.render(this.stage);
+            this.renderTexture_2.render(this.stage, null, false);
+            this.renderer.render(this.stage);
+        }
 
     }
 

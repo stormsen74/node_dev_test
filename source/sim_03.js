@@ -6,14 +6,10 @@ var PIXI = require('pixi.js');
 var colormap = require('colormap')
 
 import {Vector2} from './math/vector2';
+import Random from './utils/random'
 import Agent from './particles/agent';
 import Sim from './sim';
 import Bounds from './particles/bounds';
-
-import Random from './utils/random'
-
-import {SIM_DEFAULT} from './config';
-import {CLR} from './config';
 
 class Sim_03 extends Sim {
 
@@ -22,13 +18,25 @@ class Sim_03 extends Sim {
 
         this.size = _size;
 
+        this.WANDER_PARAMS = {
+            RADIUS: 50,
+            DELTA_T: .1,
+            ANGLE_DIRECTION: -90,
+            ANGLE_RANGE: 45,
+            SEEK_MAX_SPEED: 5,
+            SEEK_MAX_FORCE: .1,
+            DEBUG: false
+        }
 
+        this.NUM_AGENTS = 5;
         this.agents = [];
+
         this.lines = new PIXI.Graphics();
-        this.lines.blendMode = PIXI.BLEND_MODES.ADD;
+        // this.lines.blendMode = PIXI.BLEND_MODES.ADD;
+        this.addChild(this.lines);
+
         this.bounds = new Bounds(0, 0, this.size.WIDTH, this.size.HEIGHT);
         this.vFriction = new Vector2();
-        this.addChild(this.lines);
 
         //https://www.npmjs.com/package/colormap
         let options = {
@@ -44,7 +52,8 @@ class Sim_03 extends Sim {
         console.log(this.PALETTE)
 
 
-        this.init();
+        this.initAgents();
+        this.initDAT();
         this.update();
     }
 
@@ -52,9 +61,41 @@ class Sim_03 extends Sim {
         return parseInt(string.substring(1), 16);
     }
 
-    init() {
-        for (var i = 0; i < 1; i++) {
+    initDAT() {
+        this.gui = new dat.GUI();
+
+        this.gui.add(this.WANDER_PARAMS, 'DELTA_T').min(.001).max(.5).step(.001).name('DELTA_T').onChange(this.updateParams.bind(this));
+        this.gui.add(this.WANDER_PARAMS, 'RADIUS').min(1).max(500).step(1).name('RADIUS').onChange(this.updateParams.bind(this));
+        this.gui.add(this.WANDER_PARAMS, 'ANGLE_DIRECTION').min(-180).max(180).step(1).name('ANGLE_DIRECTION').onChange(this.updateParams.bind(this));
+        this.gui.add(this.WANDER_PARAMS, 'ANGLE_RANGE').min(0).max(360).step(1).name('ANGLE_RANGE').onChange(this.updateParams.bind(this));
+
+        this.gui.add(this.WANDER_PARAMS, 'SEEK_MAX_SPEED').min(1).max(12).step(.01).name('SEEK_MAX_SPEED').onChange(this.updateParams.bind(this));
+        this.gui.add(this.WANDER_PARAMS, 'SEEK_MAX_FORCE').min(0).max(1).step(.01).name('SEEK_MAX_FORCE').onChange(this.updateParams.bind(this));
+
+        this.gui.add(this.WANDER_PARAMS, 'DEBUG').name('DEBUG').onChange(this.updateParams.bind(this));
+    }
+
+    updateParams() {
+
+        this.agents.forEach(agent => {
+            agent.WANDER_PARAMS.DELTA_T = this.WANDER_PARAMS.DELTA_T;
+            agent.WANDER_PARAMS.RADIUS = this.WANDER_PARAMS.RADIUS;
+            agent.WANDER_PARAMS.ANGLE_DIRECTION = this.WANDER_PARAMS.ANGLE_DIRECTION;
+            agent.WANDER_PARAMS.ANGLE_RANGE = this.WANDER_PARAMS.ANGLE_RANGE;
+
+            agent.SEEK_MAX_SPEED = this.WANDER_PARAMS.SEEK_MAX_SPEED;
+            agent.SEEK_MAX_FORCE = this.WANDER_PARAMS.SEEK_MAX_FORCE;
+
+            agent.toggleDebugMode(this.WANDER_PARAMS.DEBUG);
+        });
+
+    }
+
+
+    initAgents() {
+        for (var i = 0; i < this.NUM_AGENTS; i++) {
             let agent = new Agent(new Vector2(Random() * this.size.WIDTH, Random() * this.size.HEIGHT), .2 + Random() * .2);
+            agent.toggleDebugMode(this.WANDER_PARAMS.DEBUG);
             agent.color = Random.item(this.PALETTE);
             agent.TAIL_LENGTH = 150;
             this.addChild(agent);
@@ -90,9 +131,8 @@ class Sim_03 extends Sim {
 
                 agent.wrap(this.bounds);
 
-
-
-
+                return
+                
                 agent.tail.unshift({
                     x: agent.position.x,
                     y: agent.position.y
@@ -117,7 +157,6 @@ class Sim_03 extends Sim {
                     agent.position.y < this.bounds.y1 ||
                     agent.position.y > this.bounds.y2
                 ) {
-                    console.log('-b-')
                     agent.tail = [];
                     this.lines.clear();
                 }

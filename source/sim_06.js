@@ -29,12 +29,12 @@ class Sim_06 extends Sim {
          -------------------------------------------------*/
 
 
-        //this.init();
+        //this.initAgents();
         this.size = _size;
 
         this.t = 0;
         this.circleRadius = this.size.HEIGHT - 100;
-        this.running = true;
+        this.simulation = true;
         this.debugMode = true;
 
         this.waypoints = [];
@@ -67,9 +67,9 @@ class Sim_06 extends Sim {
 
         this.vCenter = new Vector2(this.size.WIDTH * .5, this.size.HEIGHT);
 
-        // vecWanderPosition
-        this.vecWanderPosition = new Vector2(0, this.circleRadius).toPolar().setY(mathUtils.degToRad(this.PARAMS.PERLIN_START_ANGLE));
-        this.vecWanderPosition.toCartesian();
+        // vecWanderTheta
+        this.vecWanderTheta = new Vector2(0, this.circleRadius).toPolar().setY(mathUtils.degToRad(this.PARAMS.PERLIN_START_ANGLE));
+        this.vecWanderTheta.toCartesian();
 
         // vecTarget
         this.vecTarget = new Vector2(0, this.circleRadius).toPolar().setY(mathUtils.degToRad(this.PARAMS.PERLIN_START_ANGLE));
@@ -78,8 +78,8 @@ class Sim_06 extends Sim {
         // pTarget
         this.pTarget = new Particle();
         this.pTarget.alpha = .4;
-        this.pTarget.position.x = this.vCenter.x + this.vecWanderPosition.x;
-        this.pTarget.position.y = this.vCenter.y + this.vecWanderPosition.y;
+        this.pTarget.position.x = this.vCenter.x + this.vecWanderTheta.x;
+        this.pTarget.position.y = this.vCenter.y + this.vecWanderTheta.y;
 
 
         this.driver = new Agent(this.vCenter, 1);
@@ -126,10 +126,10 @@ class Sim_06 extends Sim {
     }
 
     toggleRun() {
-        if (this.running) {
-            this.running = false;
+        if (this.simulation) {
+            this.simulation = false;
         } else {
-            this.running = true;
+            this.simulation = true;
         }
     }
 
@@ -212,7 +212,7 @@ class Sim_06 extends Sim {
 
     update() {
 
-        if (this.running) {
+        if (this.simulation) {
             this.t += this.PARAMS.TIME_STEP;
 
 
@@ -229,22 +229,22 @@ class Sim_06 extends Sim {
              perlin-based target
              -------------------------------------------------*/
 
-            this.vecWanderPosition.toPolar().setY(mathUtils.convertToRange(this.SIMPLEX.noise2D(this.t, 0), [-1, 1], [this.PARAMS.ANGLE.MIN, this.PARAMS.ANGLE.MAX]));
-            this.vecWanderPosition.toCartesian();
+            this.vecWanderTheta.toPolar().setY(mathUtils.convertToRange(this.SIMPLEX.noise2D(this.t, 0), [-1, 1], [this.PARAMS.ANGLE.MIN, this.PARAMS.ANGLE.MAX]));
+            this.vecWanderTheta.toCartesian();
 
             /*------------------------------------------------
              sin-based target
              -------------------------------------------------*/
 
-            //this.vecWanderPosition.toPolar().setY(1 * Math.sin(5 * this.t) - Math.PI * .5)
-            //this.vecWanderPosition.toCartesian();
+            //this.vecWanderTheta.toPolar().setY(1 * Math.sin(5 * this.t) - Math.PI * .5)
+            //this.vecWanderTheta.toCartesian();
 
             /*------------------------------------------------
              update position
              -------------------------------------------------*/
 
-            this.pTarget.position.x = this.vCenter.x + this.vecWanderPosition.x;
-            this.pTarget.position.y = this.vCenter.y + this.vecWanderPosition.y;
+            this.pTarget.position.x = this.vCenter.x + this.vecWanderTheta.x;
+            this.pTarget.position.y = this.vCenter.y + this.vecWanderTheta.y;
 
             for (var i = 0; i < this.waypoints.length; i++) {
                 if (this.driver.LIFESPAN == this.waypoints[i].t && this.waypoints[i].locator.x == 0) {
@@ -275,7 +275,7 @@ class Sim_06 extends Sim {
                 this.debugMode_gfx.drawCircle(this.vCenter.x, this.vCenter.y, this.circleRadius);
 
                 //this.debugMode_gfx.moveTo(this.vCenter.x, this.vCenter.y);
-                //this.debugMode_gfx.lineTo(this.vCenter.x + this.vecWanderPosition.x, this.vCenter.y + this.vecWanderPosition.y);
+                //this.debugMode_gfx.lineTo(this.vCenter.x + this.vecWanderTheta.x, this.vCenter.y + this.vecWanderTheta.y);
 
                 this.debugMode_gfx.lineStyle(1, 0xcccccc, .4);
                 this.debugMode_gfx.moveTo(this.vCenter.x, this.vCenter.y);

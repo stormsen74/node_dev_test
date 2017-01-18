@@ -53,7 +53,7 @@ class Sim_04 extends Sim {
         //this.addChild(this.attractor2)
         //this.addChild(this.repeller)
 
-        //this.init();
+        //this.initAgents();
         this.update();
 
     }

@@ -17,6 +17,8 @@ class Agent extends PIXI.Container {
     constructor(_location, mass) {
         super();
 
+        this.DEBUG_MODE = true;
+
         this.SEEK_MAX_SPEED = 5;
         this.SEEK_MAX_FORCE = 0.1;
         this.FLEE_MAX_SPEED = 15;
@@ -28,10 +30,16 @@ class Agent extends PIXI.Container {
         this.LIFESPAN = 150;
 
 
-        this.WANDER_DISTANCE = 100;
-        this.WANDER_RADIUS = 50;
-        this.T = 0;
+        this.WANDER_PARAMS = {
+            RADIUS: 50,
+            DELTA_T: .1,
+            ANGLE_DIRECTION: -90,
+            ANGLE_RANGE: 45
+        }
+        this.t = 0;
         this.SIMPLEX = new SimplexNoise();
+        this.vecWanderTheta = new Vector2(this.WANDER_PARAMS.RADIUS, 0);
+        this.vecWanderTarget = new Vector2();
 
 
         this.mass = mass;
@@ -45,9 +53,6 @@ class Agent extends PIXI.Container {
         this.vecSumSeperate = new Vector2();
         this.vecForce = new Vector2();
         this.vecJitter = new Vector2();
-        this.wandertheta = 0;
-        this.vecWanderPosition = new Vector2(this.WANDER_RADIUS, 0);
-        this.vecWanderTarget = new Vector2();
 
         this.position.x = _location.x;
         this.position.y = _location.y;
@@ -64,28 +69,35 @@ class Agent extends PIXI.Container {
         this.SEPERATE_RADIUS = 2 * r;
         this.body.drawCircle(0, 0, r);
         this.body.endFill();
-        //this.body.cacheAsBitmap = true;
+        //this.body.blendMode = PIXI.BLEND_MODES.ADD;
+        this.addChild(this.body);
+
 
         this.vDebug = new PIXI.Graphics();
         // this.vDebug.lineStyle(1, this.color);
         this.vDebug.lineStyle(1, 0x00cc00);
-        // this.vDebug.x += r;
-
         this.vDebug.moveTo(0, 0);
         this.vDebug.lineTo(5 * r, 0);
 
 
         this.vDebugWander = new PIXI.Graphics();
-        this.vDebugWander.lineStyle(1, 0xffffff);
 
-
-        this.addChild(this.body);
-        this.addChild(this.vDebug);
-        this.addChild(this.vDebugWander);
-        //this.body.blendMode = PIXI.BLEND_MODES.ADD;
+        this.toggleDebugMode(this.DEBUG_MODE)
 
         //console.log(DEFAULT_AGENT)
 
+    }
+
+    toggleDebugMode(mode) {
+        if (mode) {
+            this.addChild(this.vDebugWander);
+            this.addChild(this.vDebug);
+            this.DEBUG_MODE = true;
+        } else {
+            this.removeChild(this.vDebugWander);
+            this.removeChild(this.vDebug);
+            this.DEBUG_MODE = false;
+        }
     }
 
 
@@ -101,8 +113,6 @@ class Agent extends PIXI.Container {
         this.vecDesired = Vector2.subtract(this.location, vTarget).normalize().multiplyScalar(this.FLEE_MAX_SPEED);
         let force = Math.max(1 - (Vector2.getDistance(this.location, vTarget) / this.FLEE_RADIUS), 0);
         this.vecSteer = Vector2.subtract(this.vecDesired, this.velocity).normalize().multiplyScalar(force).clampLength(0, this.FLEE_MAX_FORCE);
-
-        //console.log('do!', Vector2.getDistance(vTarget, this.position))
 
         if (Vector2.getDistance(vTarget, this.position) < this.FLEE_RADIUS) {
             this.applyForce(this.vecSteer);
@@ -132,51 +142,58 @@ class Agent extends PIXI.Container {
             this.applyForce(this.vecSteer);
         }
 
-        //TODO getVector();
-        // return _vecSteerSeparation;
-
     }
 
-    wander() {
-        this.T += .05;
 
-
-        this.vecWanderPosition.toPolar().setY(mathUtils.convertToRange(this.SIMPLEX.noise2D(this.T, 0), [-1, 1], [mathUtils.degToRad(0), mathUtils.degToRad(360)]));
-        this.vecWanderPosition.toCartesian();
-        this.vecWanderPosition.normalize();
-        this.vecWanderPosition.multiplyScalar(this.WANDER_RADIUS);
-
-        this._velocity = this.velocity.clone();
-        this._velocity.normalize().multiplyScalar(this.WANDER_RADIUS * 1.5)
-
-        // this.vecWanderTarget.x = this.location.x + this.vecWanderPosition.x;
-        // this.vecWanderTarget.y = this.location.y + this.vecWanderPosition.y;
-
-        this.vecWanderTarget = Vector2.add(this.location, this.vecWanderPosition);
-
-        this.seek(this.vecWanderTarget);
-
+    drawDebugWander() {
+        this.vDebugWander.rotation = -this.vecWanderTheta.angle();
         this.vDebugWander.clear()
 
         // circle
         this.vDebugWander.lineStyle(1, 0xffffff);
-        this.vDebugWander.drawCircle(0, 0, this.WANDER_RADIUS)
+        this.vDebugWander.drawCircle(0, 0, this.WANDER_PARAMS.RADIUS)
 
-        // target
-        this.vDebugWander.lineStyle(1, 0xff0000);
+        // target-vector
+        this.vDebugWander.lineStyle(1, 0x00ccff);
         this.vDebugWander.moveTo(0, 0)
-        this.vDebugWander.lineTo(this.vecWanderPosition.x, this.vecWanderPosition.y)
+        this.vDebugWander.lineTo(this.vecWanderTheta.x, this.vecWanderTheta.y)
 
-        // point
+        // target-point
         this.vDebugWander.lineStyle(0);
-        this.vDebugWander.beginFill(0x00ff55, 1);
-        this.vDebugWander.drawCircle(this.vecWanderPosition.x, this.vecWanderPosition.y, 3);
+        this.vDebugWander.beginFill(0xffcc00, 1);
+        this.vDebugWander.drawCircle(this.vecWanderTheta.x, this.vecWanderTheta.y, 3);
         this.vDebugWander.endFill();
 
         // velocity
-        this.vDebugWander.lineStyle(1, 0x00ccff);
-        this.vDebugWander.moveTo(0, 0)
-        this.vDebugWander.lineTo(this._velocity.x, this._velocity.y)
+        // this.vDebugWander.lineStyle(1, 0xffccff);
+        // this.vDebugWander.moveTo(0, 0)
+        // this.vDebugWander.lineTo(this._velocity.x, this._velocity.y)
+    }
+
+    wander() {
+        this.t += this.WANDER_PARAMS.DELTA_T;
+
+        this.vecWanderTheta.toPolar().setY(
+            mathUtils.convertToRange(
+                this.SIMPLEX.noise2D(this.t, 0),
+                [-1, 1],
+                [
+                    mathUtils.degToRad(this.WANDER_PARAMS.ANGLE_DIRECTION - this.WANDER_PARAMS.ANGLE_RANGE),
+                    mathUtils.degToRad(this.WANDER_PARAMS.ANGLE_DIRECTION + this.WANDER_PARAMS.ANGLE_RANGE)
+                ])
+        );
+        this.vecWanderTheta.toCartesian();
+        this.vecWanderTheta.normalize().multiplyScalar(this.WANDER_PARAMS.RADIUS);
+        ;
+
+        this.vecWanderTarget = Vector2.add(this.location, this.vecWanderTheta);
+        this.seek(this.vecWanderTarget);
+
+        if (this.DEBUG_MODE) this.drawDebugWander()
+
+        // this._velocity = this.velocity.clone();
+        // this._velocity.normalize().multiplyScalar(this.WANDER_DISTANCE);
+
     }
 
     jitter(jX, jY) {
@@ -198,9 +215,6 @@ class Agent extends PIXI.Container {
 
         // apply the steering force
         this.applyForce(this.vecSteer);
-
-        //TODO getVector();
-        // return _vecSteer;
 
     }
 
@@ -239,9 +253,6 @@ class Agent extends PIXI.Container {
 
 
         this.LIFESPAN -= 1;
-        //console.log(this.LIFESPAN)
-
-
     }
 
     /*------------------------------------------------
@@ -268,21 +279,16 @@ class Agent extends PIXI.Container {
         if (this.location.x < bounds.x1) {
             this.location.x = bounds.x1;
             this.velocity.x *= -1;
-            this.vecJitter.x *= -1;
         } else if (this.location.x > bounds.x2) {
             this.location.x = bounds.x2;
             this.velocity.x *= -1;
-            this.vecJitter.x *= -1;
         }
         if (this.location.y < bounds.y1) {
             this.location.y = bounds.y1;
             this.velocity.y *= -1;
-            this.vecJitter.y *= -1;
         } else if (this.location.y > bounds.y2) {
             this.location.y = bounds.y2;
             this.velocity.y *= -1;
-            this.vecJitter.y *= -1;
-            //this.velocity.multiply(0.5);
         }
 
     }

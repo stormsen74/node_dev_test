@@ -28,7 +28,7 @@ class Sim_05 extends Sim {
         this.flowField.updateDraw = true;
         this.addChild(this.flowField);
 
-        //this.init();
+        //this.initAgents();
         this.update();
 
         //this.gui = new dat.GUI();
