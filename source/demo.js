@@ -22,6 +22,7 @@ import {Vector2} from './math/vector2';
 class Demo {
 
 
+
     constructor() {
         console.log('Demo!')
 
@@ -76,12 +77,13 @@ class Demo {
 
         let rendererOptions = {
             transparent: true,
-            backgroundColor: 0x404040,
+            //backgroundColor: 0x404040,
+            backgroundColor: 0x000000,
             resolution: 1,
             antialias: true,
             autoResize: false,
             autoClear: false,
-            roundPixels: false //performance
+            roundPixels: true //performance
         }
 
         this.renderer = new PIXI.autoDetectRenderer(this.size.w, this.size.h, rendererOptions);
@@ -97,9 +99,9 @@ class Demo {
             this.stage.addChild(this.outputSprite);
 
             this.bg = new PIXI.Graphics();
-            this.bg.beginFill(rendererOptions.backgroundColor, 0.1);
-            this.bg.drawRect(0, 0, this.size.w, this.size.h);
-            this.bg.endFill();
+            this.bg.beginFill(rendererOptions.backgroundColor, 0.01);
+            //this.bg.drawRect(0, 0, this.size.w, this.size.h);
+            //this.bg.endFill();
             this.bg.cacheAsBitmap = true;
             this.stage.addChild(this.bg);
 
@@ -132,8 +134,10 @@ class Demo {
             this.renderTexture_2 = this._tempTexture;
             this.outputSprite.texture = this.renderTexture_1;
 
-            this.renderTexture_2.render(this.stage, null, false);
-            this.renderer.render(this.stage);
+            //this.renderTexture_2.render(this.stage, null, false);
+            //this.renderer.render(this.stage);
+
+            this.renderer.render(this.stage, this.renderTexture_2)
         }
 
     }

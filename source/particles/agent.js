@@ -65,19 +65,19 @@ class Agent extends PIXI.Container {
         this.body.alpha = .5;
         this.body.beginFill(this.color);
         //this.body.beginFill(0x00cc00);
-        let r = Math.ceil(this.mass) * 5;
-        this.SEPERATE_RADIUS = 2 * r;
-        this.body.drawCircle(0, 0, r);
+        this.r = Math.ceil(this.mass) * 5;
+        this.SEPERATE_RADIUS = 2 * this.r;
+        this.body.drawCircle(0, 0, this.r);
         this.body.endFill();
         //this.body.blendMode = PIXI.BLEND_MODES.ADD;
-        this.addChild(this.body);
+        //this.addChild(this.body);
 
 
         this.vDebug = new PIXI.Graphics();
         // this.vDebug.lineStyle(1, this.color);
         this.vDebug.lineStyle(1, 0x00cc00);
         this.vDebug.moveTo(0, 0);
-        this.vDebug.lineTo(5 * r, 0);
+        this.vDebug.lineTo(5 * this.r, 0);
 
 
         this.vDebugWander = new PIXI.Graphics();
@@ -170,7 +170,7 @@ class Agent extends PIXI.Container {
         // this.vDebugWander.lineTo(this._velocity.x, this._velocity.y)
     }
 
-    wander() {
+    circleWander() {
         this.t += this.WANDER_PARAMS.DELTA_T;
 
         this.vecWanderTheta.toPolar().setY(

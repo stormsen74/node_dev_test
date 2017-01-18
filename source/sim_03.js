@@ -28,20 +28,28 @@ class Sim_03 extends Sim {
             DEBUG: false
         }
 
-        this.NUM_AGENTS = 5;
+        this.simulation = true;
+
+        this.NUM_AGENTS = 32;
         this.agents = [];
+        this.colors = []
 
         this.lines = new PIXI.Graphics();
         // this.lines.blendMode = PIXI.BLEND_MODES.ADD;
         this.addChild(this.lines);
+
+        //this.LINE_STYLE = {
+        //    lineWidth: 1,
+        //    lineColor: 0xffffff
+        //}
 
         this.bounds = new Bounds(0, 0, this.size.WIDTH, this.size.HEIGHT);
         this.vFriction = new Vector2();
 
         //https://www.npmjs.com/package/colormap
         let options = {
-            colormap: 'cubehelix',   // pick a builtin colormap or add your own
-            nshades: 16,       // how many divisions
+            colormap: 'copper',   // pick a builtin colormap or add your own
+            nshades: 32,       // how many divisions
             format: 'hex',     // "hex" or "rgb" or "rgbaString"
             alpha: 1           // set an alpha value or a linear alpha mapping [start, end]
         }
@@ -61,6 +69,10 @@ class Sim_03 extends Sim {
         return parseInt(string.substring(1), 16);
     }
 
+    numberToHex(number) {
+        return number.toString(16);
+    }
+
     initDAT() {
         this.gui = new dat.GUI();
 
@@ -73,6 +85,17 @@ class Sim_03 extends Sim {
         this.gui.add(this.WANDER_PARAMS, 'SEEK_MAX_FORCE').min(0).max(1).step(.01).name('SEEK_MAX_FORCE').onChange(this.updateParams.bind(this));
 
         this.gui.add(this.WANDER_PARAMS, 'DEBUG').name('DEBUG').onChange(this.updateParams.bind(this));
+
+        this.gui.add(this, 'toggleRun').name('play/pause');
+        //this.gui.add(this, 'reset').name('reset');
+    }
+
+    toggleRun() {
+        if (this.simulation) {
+            this.simulation = false;
+        } else {
+            this.simulation = true;
+        }
     }
 
     updateParams() {
@@ -94,14 +117,20 @@ class Sim_03 extends Sim {
 
     initAgents() {
         for (var i = 0; i < this.NUM_AGENTS; i++) {
-            let agent = new Agent(new Vector2(Random() * this.size.WIDTH, Random() * this.size.HEIGHT), .2 + Random() * .2);
+            //let agent = new Agent(new Vector2(Random() * this.size.WIDTH, Random() * this.size.HEIGHT), .2 + Random() * .2);
+            let agent = new Agent(new Vector2(this.size.WIDTH / this.NUM_AGENTS * i, this.size.HEIGHT), .2 + Random() * .2);
             agent.toggleDebugMode(this.WANDER_PARAMS.DEBUG);
             agent.color = Random.item(this.PALETTE);
-            agent.TAIL_LENGTH = 150;
+            this.colors[i] = this.PALETTE[i];
+            //this.LINE_STYLE.lineColor = agent.color;
+            agent.TAIL_LENGTH = 15;
             this.addChild(agent);
             this.agents.push(agent);
         }
+
+        console.log(this.colors)
     }
+
 
     onPointerMove(event) {
         const {clientX: x, clientY: y} = (
@@ -117,22 +146,22 @@ class Sim_03 extends Sim {
     update() {
 
         // inherit
-        if (!this.vMouse.pressed) {
 
+        if (this.simulation) {
             this.lines.clear();
 
-            this.agents.forEach(agent => {
+            this.agents.forEach((agent, index) => {
 
                 // agent.seek(this.vMouse);
                 // this.vFriction.set(agent.velocity.x, agent.velocity.y).multiplyScalar(-1).normalize().multiplyScalar(.3);
                 // agent.applyForce(this.vFriction);
                 agent.update();
-                agent.wander();
+                agent.circleWander();
 
                 agent.wrap(this.bounds);
 
-                return
-                
+                //return
+
                 agent.tail.unshift({
                     x: agent.position.x,
                     y: agent.position.y
@@ -143,7 +172,8 @@ class Sim_03 extends Sim {
                 }
 
                 //console.log(agent.color)
-                this.lines.lineStyle(1, 0xcccccc);
+                this.lines.lineStyle(agent.r, this.colors[index]);
+                this.lines.lineStyle(agent.r, this.colors[index]);
                 this.lines.moveTo(agent.position.x, agent.position.y);
 
                 agent.tail.forEach((point, index) => {
@@ -163,6 +193,7 @@ class Sim_03 extends Sim {
 
             });
         }
+
 
     }
 
