@@ -34,9 +34,12 @@ class Sim_03 extends Sim {
         this.agents = [];
         this.colors = []
 
+        this.blurFilter = new PIXI.filters.BlurFilter(1, 3)
+
         this.lines = new PIXI.Graphics();
         // this.lines.blendMode = PIXI.BLEND_MODES.ADD;
         this.addChild(this.lines);
+        // this.lines.filters = [this.blurFilter]
 
         //this.LINE_STYLE = {
         //    lineWidth: 1,

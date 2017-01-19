@@ -19,8 +19,9 @@ import {DEFAULT_SIZE} from './config';
 
 import {Vector2} from './math/vector2';
 
-class Demo {
+// http://www.html5gamedevs.com/topic/23122-filters-that-require-a-margin/
 
+class Demo {
 
 
     constructor() {
@@ -31,6 +32,8 @@ class Demo {
         }
 
         this._tempTexture;
+        this.blurFilter = new PIXI.filters.BlurFilter(1, 2);
+        this.blurFilter.padding = 10
 
 
         this.size = {
@@ -96,12 +99,13 @@ class Demo {
             this.renderTexture_1 = new PIXI.RenderTexture(this.renderer, this.size.w, this.size.h);
             this.renderTexture_2 = new PIXI.RenderTexture(this.renderer, this.size.w, this.size.h);
             this.outputSprite = new PIXI.Sprite(this.renderTexture_1);
+            this.outputSprite.filters = [this.blurFilter];
             this.stage.addChild(this.outputSprite);
 
             this.bg = new PIXI.Graphics();
-            this.bg.beginFill(rendererOptions.backgroundColor, 0.01);
-            //this.bg.drawRect(0, 0, this.size.w, this.size.h);
-            //this.bg.endFill();
+            this.bg.beginFill(rendererOptions.backgroundColor, 0.1);
+            this.bg.drawRect(0, 0, this.size.w, this.size.h);
+            this.bg.endFill();
             this.bg.cacheAsBitmap = true;
             this.stage.addChild(this.bg);
 
