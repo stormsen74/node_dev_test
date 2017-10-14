@@ -51,7 +51,7 @@ class Sim_03 extends Sim {
 
         //https://www.npmjs.com/package/colormap
         let options = {
-            colormap: 'copper',   // pick a builtin colormap or add your own
+            colormap: 'portland',   // pick a builtin colormap or add your own
             nshades: 32,       // how many divisions
             format: 'hex',     // "hex" or "rgb" or "rgbaString"
             alpha: 1           // set an alpha value or a linear alpha mapping [start, end]

@@ -17,9 +17,9 @@ class Agent extends PIXI.Container {
     constructor(_location, mass) {
         super();
 
-        this.DEBUG_MODE = true;
+        this.DEBUG_MODE = false;
 
-        this.SEEK_MAX_SPEED = 5;
+        this.SEEK_MAX_SPEED = 10;
         this.SEEK_MAX_FORCE = 0.1;
         this.FLEE_MAX_SPEED = 15;
         this.FLEE_MAX_FORCE = .5;
@@ -59,7 +59,7 @@ class Agent extends PIXI.Container {
 
         this.tail = [];
 
-        this.color = Random.item(COLORS.VENUS);
+        this.color = Random.item(COLORS.DEFAULT);
 
         this.body = new PIXI.Graphics();
         this.body.alpha = .5;
@@ -184,7 +184,6 @@ class Agent extends PIXI.Container {
         );
         this.vecWanderTheta.toCartesian();
         this.vecWanderTheta.normalize().multiplyScalar(this.WANDER_PARAMS.RADIUS);
-        ;
 
         this.vecWanderTarget = Vector2.add(this.location, this.vecWanderTheta);
         this.seek(this.vecWanderTarget);

@@ -27,6 +27,11 @@ export const DEFAULT_SIZE = {
     HEIGHT: 720
 }
 
+export const SIZE_HD = {
+    WIDTH: 1920,
+    HEIGHT: 1080
+}
+
 export const SIM_DEFAULT = {
     MAX_PARTICLES: 10
 }

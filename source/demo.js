@@ -7,14 +7,15 @@ var PIXI = require('pixi.js');
 
 
 import Sim from './sim';
-import Sim_01 from './sim_01';
-import Sim_02 from './sim_02';
-import Sim_03 from './sim_03';
-import Sim_04 from './sim_04';
-import Sim_05 from './sim_05';
+//import Sim_01 from './sim_01';
+//import Sim_02 from './sim_02';
+//import Sim_03 from './sim_03';
+//import Sim_04 from './sim_04';
+//import Sim_05 from './sim_05';
 import Sim_06 from './sim_06';
 
 import {DEFAULT_SIZE} from './config';
+import {SIZE_HD} from './config';
 
 
 import {Vector2} from './math/vector2';
@@ -28,12 +29,12 @@ class Demo {
         console.log('Demo!')
 
         this.DEMO = {
-            renderTexture: true
+            renderTexture: false
         }
 
         this._tempTexture;
         this.blurFilter = new PIXI.filters.BlurFilter(1, 2);
-        this.blurFilter.padding = 10
+        this.blurFilter.padding = 10;
 
 
         this.size = {
@@ -43,7 +44,7 @@ class Demo {
         }
 
 
-        this.simulation = new Sim_03(DEFAULT_SIZE)
+        this.simulation = new Sim_06(DEFAULT_SIZE)
 
         this.init_PIXI_Renderer();
         this.initSim();

@@ -122,6 +122,7 @@ class Sim_04 extends Sim {
         this.pSystem.drawTail();
 
         this.flowField.update();
+        this.flowField.drawField();
 
 
         // inherit
