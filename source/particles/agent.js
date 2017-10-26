@@ -19,7 +19,7 @@ class Agent extends PIXI.Container {
 
         this.DEBUG_MODE = false;
 
-        this.SEEK_MAX_SPEED = 5;
+        this.SEEK_MAX_SPEED = 10;
         this.SEEK_MAX_FORCE = 0.1;
         this.FLEE_MAX_SPEED = 15;
         this.FLEE_MAX_FORCE = .5;
@@ -59,7 +59,7 @@ class Agent extends PIXI.Container {
 
         this.tail = [];
 
-        this.color = Random.item(COLORS.VENUS);
+        this.color = Random.item(COLORS.DEFAULT);
 
         this.body = new PIXI.Graphics();
         this.body.alpha = .5;

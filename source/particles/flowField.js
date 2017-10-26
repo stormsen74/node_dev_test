@@ -21,7 +21,7 @@ class FlowField extends PIXI.Container {
         console.log(this.type)
 
 
-        this.updateDraw = true;
+        this.updateDraw = false;
 
         this.RESOLUTION = {
             X: 30,
@@ -87,7 +87,7 @@ class FlowField extends PIXI.Container {
                     this.gui = new dat.GUI();
                     this.CONFIG.INFO = 'perlinField';
                     this.gui.add(this.CONFIG, 'INFO');
-                    this.gui.add(FIELD_PARAMS.perlin, 'FIELD_SCALE').min(1).max(10).step(0.01).name('FIELD_SCALE').onChange(this.stepPerlinField.bind(this));
+                    this.gui.add(FIELD_PARAMS.perlin, 'FIELD_SCALE').min(5).max(40).step(0.01).name('FIELD_SCALE').onChange(this.stepPerlinField.bind(this));
                     this.gui.add(FIELD_PARAMS.perlin, 'FIELD_STRENGTH').min(1).max(30).step(0.01).name('FIELD_STRENGTH').onChange(this.stepPerlinField.bind(this));
                     this.gui.add(FIELD_PARAMS, 'deltaT').min(0.001).max(0.01).step(0.0001).name('deltaT').onChange(this.stepPerlinField.bind(this));
 
@@ -328,25 +328,36 @@ class FlowField extends PIXI.Container {
             for (var j = 0; j < this.vArray[1].length; j++) {
 
                 this.magVector = this.vArray[i][j].clone();
+                this.magVector.multiplyScalar(2.5);
 
-                this.graphics.lineStyle(1, 0xf3e00f, 1);
+                this.graphics.lineStyle(1, 0xffd131, 1);
                 this.graphics.moveTo(this.centerX, this.centerY);
                 this.graphics.lineTo(this.centerX + this.magVector.x, this.centerY + this.magVector.y);
+
+                //this.graphics.lineStyle(1, 0xffffff, .1);
+                //this.graphics.beginFill(0x232323);
 
                 //drawField center point
                 this.centerX = i * this.cellWidth + this.cellWidth * .5;
                 this.centerY = j * this.cellHeight + this.cellHeight * .5;
-                // this.graphics.drawCircle(this.centerX, this.centerY, 2, 0, 2 * 3.14, false);
-                // this.graphics.endFill();
+                //this.graphics.drawCircle(this.centerX, this.centerY, 2, 0, 2 * 3.14, false);
+                //this.graphics.endFill();
+
+                //drawField mag vector
+                //this.color.setHSV(.5 + value * .5, .5, 0.0);
+                //this.color.setBrightness(.5 + value);
+
+
+                //this.magVector.normalize();
 
 
                 // var value = mathUtils.convertToRange(this.magVector.length(), [0, 25], [0, 1]);
-                var value = mathUtils.convertToRange(this.magVector.angle(), [0, 2 * 3.14], [.2, 1]);
+                var value = mathUtils.convertToRange(this.magVector.angle(), [0, 2 * 3.14], [.2, .9]);
                 // console.log(this.magVector.length())
 
-                // this.graphics.beginFill(0xff4455, value);
-                // this.graphics.drawRect(i * this.cellWidth, j * this.cellHeight, this.cellWidth, this.cellHeight)
-                // this.graphics.endFill();
+                this.graphics.beginFill(0x165dad, value);
+                this.graphics.drawRect(i * this.cellWidth, j * this.cellHeight, this.cellWidth, this.cellHeight)
+                this.graphics.endFill();
 
             }
         }

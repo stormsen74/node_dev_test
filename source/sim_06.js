@@ -184,7 +184,7 @@ class Sim_06 extends Sim {
     reset() {
         console.log('reset')
 
-        // this.gfx.clear();
+        this.gfx.clear();
         this.gfx.lineStyle(1, 0xffffff, 1);
         this.driver.location.x = this.vCenter.x;
         this.driver.location.y = this.vCenter.y;
@@ -204,7 +204,7 @@ class Sim_06 extends Sim {
     }
 
     plotPoint(v) {
-        this.gfx.lineStyle(1, 0xcc0000, 1);
+        this.gfx.lineStyle(1, 0xffc515, .5);
         this.gfx.drawCircle(v.x, v.y, 10)
         console.log('plot', v)
     }

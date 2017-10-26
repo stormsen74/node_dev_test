@@ -54,9 +54,7 @@ class Sim_02 extends PIXI.Container {
 
     onPointerMove(event) {
         const {clientX: x, clientY: y} = (
-            event.changedTouches ?
-                event.changedTouches[0] :
-                event
+            event.changedTouches ? event.changedTouches[0] : event
         );
 
         this.vMouse.x = x - parseInt(document.getElementById('screen').style.left);
@@ -99,7 +97,7 @@ class Sim_02 extends PIXI.Container {
 
 }
 
-Sim_02.MAX_PARTICLES = 100;
+Sim_02.MAX_PARTICLES = 30;
 Sim_02.TAIL_LENGTH = 15;
 
 
