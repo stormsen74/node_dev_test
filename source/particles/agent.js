@@ -17,7 +17,7 @@ class Agent extends PIXI.Container {
     constructor(_location, mass) {
         super();
 
-        this.DEBUG_MODE = true;
+        this.DEBUG_MODE = false;
 
         this.SEEK_MAX_SPEED = 5;
         this.SEEK_MAX_FORCE = 0.1;
@@ -184,7 +184,6 @@ class Agent extends PIXI.Container {
         );
         this.vecWanderTheta.toCartesian();
         this.vecWanderTheta.normalize().multiplyScalar(this.WANDER_PARAMS.RADIUS);
-        ;
 
         this.vecWanderTarget = Vector2.add(this.location, this.vecWanderTheta);
         this.seek(this.vecWanderTarget);

@@ -25,12 +25,12 @@ class Sim_03 extends Sim {
             ANGLE_RANGE: 45,
             SEEK_MAX_SPEED: 5,
             SEEK_MAX_FORCE: .1,
-            DEBUG: false
+            DEBUG: true
         }
 
         this.simulation = true;
 
-        this.NUM_AGENTS = 32;
+        this.NUM_AGENTS = 1;
         this.agents = [];
         this.colors = []
 
@@ -161,7 +161,7 @@ class Sim_03 extends Sim {
                 agent.update();
                 agent.circleWander();
 
-                agent.wrap(this.bounds);
+                agent.bounce(this.bounds);
 
                 //return
 

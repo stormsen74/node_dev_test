@@ -74,6 +74,7 @@ class Sim_02 extends PIXI.Container {
         this.agents.forEach(agent => {
 
             agent.seek(this.vMouse);
+            agent.circleWander();
             agent.update();
 
             agent.tail.unshift({

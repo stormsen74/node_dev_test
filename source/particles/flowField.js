@@ -21,7 +21,7 @@ class FlowField extends PIXI.Container {
         console.log(this.type)
 
 
-        this.updateDraw = false;
+        this.updateDraw = true;
 
         this.RESOLUTION = {
             X: 30,
@@ -329,35 +329,24 @@ class FlowField extends PIXI.Container {
 
                 this.magVector = this.vArray[i][j].clone();
 
-                this.graphics.lineStyle(1, 0x334477, 1);
+                this.graphics.lineStyle(1, 0xf3e00f, 1);
                 this.graphics.moveTo(this.centerX, this.centerY);
                 this.graphics.lineTo(this.centerX + this.magVector.x, this.centerY + this.magVector.y);
-
-                this.graphics.lineStyle(1, 0x232323, .1);
-                this.graphics.beginFill(0x232323);
 
                 //drawField center point
                 this.centerX = i * this.cellWidth + this.cellWidth * .5;
                 this.centerY = j * this.cellHeight + this.cellHeight * .5;
-                this.graphics.drawCircle(this.centerX, this.centerY, 2, 0, 2 * 3.14, false);
-                this.graphics.endFill();
-
-                // drawField mag vector
-                //this.color.setHSV(.5 + value * .5, .5, 0.0);
-                //this.color.setBrightness(.5 + value);
-
-
-                //this.magVector.normalize();
-                //this.magVector.multiplyScalar(20);
+                // this.graphics.drawCircle(this.centerX, this.centerY, 2, 0, 2 * 3.14, false);
+                // this.graphics.endFill();
 
 
                 // var value = mathUtils.convertToRange(this.magVector.length(), [0, 25], [0, 1]);
                 var value = mathUtils.convertToRange(this.magVector.angle(), [0, 2 * 3.14], [.2, 1]);
                 // console.log(this.magVector.length())
 
-                this.graphics.beginFill(0xff4455, value);
-                this.graphics.drawRect(i * this.cellWidth, j * this.cellHeight, this.cellWidth, this.cellHeight)
-                this.graphics.endFill();
+                // this.graphics.beginFill(0xff4455, value);
+                // this.graphics.drawRect(i * this.cellWidth, j * this.cellHeight, this.cellWidth, this.cellHeight)
+                // this.graphics.endFill();
 
             }
         }

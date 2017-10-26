@@ -47,9 +47,10 @@ class Sim_04 extends Sim {
         this.flowField = new FlowField(_size, FIELD_PARAMS.type.vectorField);
 
 
+
         this.addChild(this.pSystem)
         this.addChild(this.flowField)
-        //this.addChild(this.attractor)
+        // this.addChild(this.attractor)
         //this.addChild(this.attractor2)
         //this.addChild(this.repeller)
 

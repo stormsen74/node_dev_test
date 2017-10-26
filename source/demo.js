@@ -28,12 +28,12 @@ class Demo {
         console.log('Demo!')
 
         this.DEMO = {
-            renderTexture: true
+            renderTexture: false
         }
 
         this._tempTexture;
         this.blurFilter = new PIXI.filters.BlurFilter(1, 2);
-        this.blurFilter.padding = 10
+        this.blurFilter.padding = 10;
 
 
         this.size = {
@@ -43,7 +43,7 @@ class Demo {
         }
 
 
-        this.simulation = new Sim_03(DEFAULT_SIZE)
+        this.simulation = new Sim_06(DEFAULT_SIZE)
 
         this.init_PIXI_Renderer();
         this.initSim();
